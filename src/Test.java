@@ -12,6 +12,7 @@ public class Test {
 		Database.initDB();
 		
 		CompaniesDBDAO cDbdao = new CompaniesDBDAO();
+		
 		System.out.println(cDbdao.isCompanyExist("hello@cola", "12345"));
 
 	}

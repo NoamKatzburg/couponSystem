@@ -14,7 +14,7 @@ import noam.db.ConnectionPool;
 
 public class CompaniesDBDAO implements CompaniesDAO {
 
-	private static Connection connection;
+	private Connection connection;
 
 	public boolean isCompanyExist(String email, String password) throws SQLException {
 		connection = null;
