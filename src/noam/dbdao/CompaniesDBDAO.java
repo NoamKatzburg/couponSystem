@@ -42,7 +42,7 @@ public class CompaniesDBDAO implements CompaniesDAO {
 		return false;
 	}
 
-	public void addCompany(Company company) throws InterruptedException, SQLException {
+	public void addCompany(Company company) {
 		connection = null;
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
@@ -61,7 +61,7 @@ public class CompaniesDBDAO implements CompaniesDAO {
 
 	}
 
-	public void updateCompany(Company company) throws SQLException {
+	public void updateCompany(Company company)  {
 
 		connection = null;
 		try {
@@ -82,7 +82,7 @@ public class CompaniesDBDAO implements CompaniesDAO {
 
 	}
 
-	public void deleteCompany(int companyID) throws SQLException {
+	public void deleteCompany(int companyID)  {
 		connection = null;
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
@@ -100,7 +100,7 @@ public class CompaniesDBDAO implements CompaniesDAO {
 
 	}
 
-	public ArrayList<Company> getAllCompanies() throws SQLException {
+	public ArrayList<Company> getAllCompanies() {
 		List<Company> companies = new ArrayList<Company>();
 
 		connection = null;
