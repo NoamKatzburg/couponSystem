@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class Database {
 	private static Connection connection;
-	private static final String url = "jdbc:mysql://localhost:3306/123?createDatabaseIfNotExist=TRUE&useTimezone=TRUE&serverTimezone=UTC";
+	private static final String url = "jdbc:mysql://localhost:3306/coupon_system?createDatabaseIfNotExist=TRUE&useTimezone=TRUE&serverTimezone=UTC";
 	private static final String username = "root";
 	private static final String password = "1234";
 
@@ -20,6 +20,15 @@ public class Database {
 
 	public static String getPassword() {
 		return password;
+	}
+	
+	public static void initDB() throws SQLException, InterruptedException {
+		createSchema();
+		createTableCompanies();
+		createTableCategories();
+		createTableCustomers();
+		createTableCoupons();
+		createTableCustomerVsCoupons();
 	}
 
 	public static void createSchema() throws SQLException, InterruptedException {
