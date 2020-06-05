@@ -21,7 +21,7 @@ public class CompaniesDBDAO implements CompaniesDAO {
 
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
-			String sql = "SELECT * FROM `coupon_system`.`companies` WHERE  email= ? AND password=?";
+			String sql = "SELECT * FROM `coupon_system`.`companies` WHERE  `email`= ? AND `password`=?;";
 
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setString(1, email);
@@ -47,7 +47,7 @@ public class CompaniesDBDAO implements CompaniesDAO {
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
-			String sql = "INSERT INTO `COUPON_SYSTEM`.`COMPANIES` (name, email, password) VALUES (?, ?, ?);";
+			String sql = "INSERT INTO `coupon_system`.`companies` (`name`, `email`, `password`) VALUES (?, ?, ?);\r\n";
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setString(1, company.getName());
 			statement.setString(2, company.getEmail());
@@ -67,7 +67,7 @@ public class CompaniesDBDAO implements CompaniesDAO {
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
-			String sql = "UPDATE `COUPON_SYSTEM`.`COMPANIES` SET name=?, email=?, password=? WHERE id=?;";
+			String sql = "UPDATE `coupon_system`.`companies` SET `name` = ?, `email` = ?, `password` = ? WHERE (`id` = ?);\r\n";
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setString(1, company.getName());
 			statement.setString(2, company.getEmail());
@@ -87,7 +87,7 @@ public class CompaniesDBDAO implements CompaniesDAO {
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
-			String sql = "DELETE FROM `COUPON_SYSTEM`.`COMPANIES` where id=?;";
+			String sql = "DELETE FROM `coupon_system`.`companies` WHERE (`id` = ?);";
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setInt(1, companyID);
 
@@ -107,7 +107,7 @@ public class CompaniesDBDAO implements CompaniesDAO {
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
-			String sql = "SELECT * FROM `COUPON_SYSTEM`.`COMPANIES`;";
+			String sql = "SELECT * FROM `coupon_system`.`companies`;";
 
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(sql);
@@ -137,7 +137,7 @@ public class CompaniesDBDAO implements CompaniesDAO {
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
-			String sql = "SELECT * FROM `COUPON_SYSTEM`.`COMPANIES` WHERE id=?;";
+			String sql = "SELECT * FROM `COUPON_SYSTEM`.`COMPANIES` WHERE `id`=?;";
 
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(sql);
