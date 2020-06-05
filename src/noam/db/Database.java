@@ -21,7 +21,7 @@ public class Database {
 	public static String getPassword() {
 		return password;
 	}
-	
+
 	public static void initDB() throws SQLException, InterruptedException {
 		createSchema();
 		createTableCompanies();
@@ -85,7 +85,7 @@ public class Database {
 
 			String sql = "CREATE TABLE `coupon_system`.`customers` (\r\n" + "  `id` INT NOT NULL AUTO_INCREMENT,\r\n"
 					+ "  `first_name` VARCHAR(45) NOT NULL,\r\n" + "  `last_name` VARCHAR(45) NOT NULL,\r\n"
-					+ "  `password` VARCHAR(45) NOT NULL,\r\n" + "  `email` VARCHAR(45) NOT NULL,\r\n"
+					+ "  `email` VARCHAR(45) NOT NULL,\r\n" + "  `password` VARCHAR(45) NOT NULL,\r\n"
 					+ "  PRIMARY KEY (`id`));";
 
 			// STEP 3
