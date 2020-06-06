@@ -8,7 +8,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import noam.beans.Company;
 import noam.beans.Customer;
 import noam.dao.CustomersDAO;
 import noam.db.ConnectionPool;
