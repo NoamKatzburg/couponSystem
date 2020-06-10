@@ -1,7 +1,10 @@
 package noam.dao;
 
 import java.util.ArrayList;
+
 import noam.beans.Coupon;
+import noam.exceptions.noSuchCouponException;
+import noam.exceptions.outOfStockException;
 
 public interface CouponsDAO {
 
@@ -13,9 +16,9 @@ public interface CouponsDAO {
 
 	ArrayList<Coupon> getAllCoupons();
 
-	Coupon getOneCoupon(int CouponID);
+	Coupon getOneCoupon(int couponID);
 
-	void addCouponPurchase(int customerID, int couponID);
+	void addCouponPurchase(int customerID, int couponID) throws outOfStockException;
 
-	void deleteCouponPurchase(int customerID, int couponID);
+	void deleteCouponPurchase(int customerID, int couponID) throws noSuchCouponException;
 }
