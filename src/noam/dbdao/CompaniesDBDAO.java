@@ -139,8 +139,9 @@ public class CompaniesDBDAO implements CompaniesDAO {
 
 			String sql = "SELECT * FROM `COUPON_SYSTEM`.`COMPANIES` WHERE `id`=?;";
 
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery(sql);
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setInt(1, companyID);
+			ResultSet resultSet = statement.executeQuery();
 
 			while (resultSet.next()) {
 				int id = resultSet.getInt(1);

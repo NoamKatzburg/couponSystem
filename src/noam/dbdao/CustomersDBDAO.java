@@ -142,8 +142,9 @@ public class CustomersDBDAO implements CustomersDAO {
 
 			String sql = "SELECT * FROM `coupon_system`.`customers` WHERE (`id`= ?);";
 
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery(sql);
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setInt(1, customerID);
+			ResultSet resultSet = statement.executeQuery();
 
 			while (resultSet.next()) {
 				int id = resultSet.getInt(1);
