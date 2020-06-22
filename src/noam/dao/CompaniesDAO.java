@@ -8,9 +8,9 @@ public interface CompaniesDAO {
 
 	boolean isCompanyExist(String email, String password) throws SQLException;
 
-	void addCompany(Company company) ;
+	void addCompany(Company company);
 
-	void updateCompany(Company company);
+	void updateCompany(Company company, int companyId);
 
 	void deleteCompany(int companyID);
 
