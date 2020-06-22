@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import noam.beans.Company;
 import noam.dao.CompaniesDAO;
 import noam.db.ConnectionPool;
@@ -21,13 +22,14 @@ public class CompaniesDBDAO implements CompaniesDAO {
 
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
-			String sql = "SELECT * FROM `coupon_system`.`companies` WHERE  `email`= ? AND `password`=?;";
+			String sql = "SELECT * FROM `coupon_system`.`companies` WHERE  `email`= ? AND `password`= ? ;";
 
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setString(1, email);
 			statement.setString(2, password);
 			ResultSet resultSet = statement.executeQuery();
 
+			
 			if (resultSet.next()) {
 				return true;
 			}
@@ -61,7 +63,7 @@ public class CompaniesDBDAO implements CompaniesDAO {
 
 	}
 
-	public void updateCompany(Company company)  {
+	public void updateCompany(Company company, int companyId)  {
 
 		connection = null;
 		try {
@@ -72,7 +74,7 @@ public class CompaniesDBDAO implements CompaniesDAO {
 			statement.setString(1, company.getName());
 			statement.setString(2, company.getEmail());
 			statement.setString(3, company.getPassword());
-			statement.setInt(4, company.getId());
+			statement.setInt(4, companyId);
 			statement.executeUpdate();
 		} catch (Exception e) {
 			e.getMessage();
@@ -120,7 +122,6 @@ public class CompaniesDBDAO implements CompaniesDAO {
 
 				companies.add(new Company(id, name, email, password));
 			}
-			// what to do with the array of coupons?
 
 		} catch (Exception e) {
 			e.getMessage();
