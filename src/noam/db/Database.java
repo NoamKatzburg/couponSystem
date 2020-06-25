@@ -28,6 +28,7 @@ public class Database {
 		createSchema();
 		createTableCompanies();
 		createTableCategories();
+		initCategoryTable();
 		createTableCustomers();
 		createTableCoupons();
 		createTableCustomerVsCoupons();
@@ -146,6 +147,62 @@ public class Database {
 			connection = null;
 		}
 
+	}
+	
+	public static void initCategoryTable() {
+		
+		
+		connection = null;
+		try {
+			connection = ConnectionPool.getInstance().getConnection();
+			
+			String sql = "INSERT INTO `coupon_system`.`categories` (`name`) VALUES ('Food');";
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.executeUpdate();
+		} catch (Exception e) {
+			e.getMessage();
+		} finally {
+			ConnectionPool.getInstance().returnConnection(connection);
+		}
+		
+		connection = null;
+		try {
+			connection = ConnectionPool.getInstance().getConnection();
+			
+			String sql = "INSERT INTO `coupon_system`.`categories` (`name`) VALUES ('Electricty');";
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.executeUpdate();
+		} catch (Exception e) {
+			e.getMessage();
+		} finally {
+			ConnectionPool.getInstance().returnConnection(connection);
+		}
+		
+		connection = null;
+		try {
+			connection = ConnectionPool.getInstance().getConnection();
+			
+			String sql = "INSERT INTO `coupon_system`.`categories` (`name`) VALUES ('Restaurant');";
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.executeUpdate();
+		} catch (Exception e) {
+			e.getMessage();
+		} finally {
+			ConnectionPool.getInstance().returnConnection(connection);
+		}
+		
+		connection = null;
+		try {
+			connection = ConnectionPool.getInstance().getConnection();
+			
+			String sql = "INSERT INTO `coupon_system`.`categories` (`name`) VALUES ('Vacation');";
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.executeUpdate();
+		} catch (Exception e) {
+			e.getMessage();
+		} finally {
+			ConnectionPool.getInstance().returnConnection(connection);
+		}
 	}
 
 	public static void createTableCoupons() throws SQLException, InterruptedException {
