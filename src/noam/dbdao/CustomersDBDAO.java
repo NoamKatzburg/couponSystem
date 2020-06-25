@@ -64,19 +64,18 @@ public class CustomersDBDAO implements CustomersDAO {
 
 	}
 
-	public void updateCustomer(Customer customer) {
+	public void updateCustomer(Customer customer, int id) {
 		connection = null;
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
-			String sql = "UPDATE `coupon_system`.`customers` SET `first_name` = ?, `last_name` = ?, `email` = ?, `password` = ? WHERE (`id` = ?');\r\n";
+			String sql = "UPDATE `coupon_system`.`customers` SET `first_name` = ?, `last_name` = ?, `email` = ?, `password` = ? WHERE (`id` = ?);";
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setString(1, customer.getFirstName());
 			statement.setString(2, customer.getLastName());
 			statement.setString(3, customer.getEmail());
 			statement.setString(4, customer.getPassword());
-			statement.setInt(5, customer.getId());
-
+			statement.setInt(5, id);
 			statement.executeUpdate();
 		} catch (Exception e) {
 			e.getMessage();

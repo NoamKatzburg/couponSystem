@@ -11,7 +11,7 @@ public interface CustomersDAO {
 
 	void addCustomer(Customer customer);
 
-	void updateCustomer(Customer customer);
+	void updateCustomer(Customer customer, int id);
 
 	void deleteCustomer(int customerID);
 
