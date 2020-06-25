@@ -28,7 +28,7 @@ public class CouponsDBDAO implements CouponsDAO {
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
-			String sql = "INSERT INTO `coupon_system`.`coupons` (`company_id`, `category_id`, `title`, `description`, `start_date`, `end_date`, `amount`, `price`, `image`) VALUES (?, ?, ?, ?', ?, ?, ?, ?, ?);\r\n";
+			String sql = "INSERT INTO `coupon_system`.`coupons` (`company_id`, `category_id`, `title`, `description`, `start_date`, `end_date`, `amount`, `price`, `image`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);\r\n";
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setInt(1, coupon.getCompanyID());
 			statement.setInt(2, coupon.getCategory().ordinal() + 1);
@@ -48,7 +48,7 @@ public class CouponsDBDAO implements CouponsDAO {
 
 	}
 
-	public void updateCoupon(Coupon coupon) {
+	public void updateCoupon(Coupon coupon, int id) {
 		connection = null;
 
 		try {
@@ -65,7 +65,7 @@ public class CouponsDBDAO implements CouponsDAO {
 			statement.setInt(7, coupon.getAmount());
 			statement.setDouble(8, coupon.getPrice());
 			statement.setString(9, coupon.getImage());
-			statement.setInt(10, coupon.getId());
+			statement.setInt(10, id);
 			statement.executeUpdate();
 		} catch (Exception e) {
 			e.getMessage();
@@ -99,16 +99,14 @@ public class CouponsDBDAO implements CouponsDAO {
 		connection = null;
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
-
 			String sql = "SELECT * FROM `coupon_system`.`coupons`;";
-
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(sql);
 
 			while (resultSet.next()) {
 				int id = resultSet.getInt(1);
 				int companyID = resultSet.getInt(2);
-				Category category = Category.valueOf(resultSet.getString(3)); // what about case sensitivity?
+				Category category = MyUtils.convertIntToCategory(resultSet.getInt(3));
 				String title = resultSet.getString(4);
 				String description = resultSet.getString(5);
 				Date startDate = MyUtils.convertSqlToUtil(resultSet.getDate(6));
@@ -126,7 +124,6 @@ public class CouponsDBDAO implements CouponsDAO {
 			ConnectionPool.getInstance().returnConnection(connection);
 		}
 		return (ArrayList<Coupon>) coupons;
-
 	}
 
 	public Coupon getOneCoupon(int couponID) {
@@ -144,7 +141,7 @@ public class CouponsDBDAO implements CouponsDAO {
 			while (resultSet.next()) {
 				int id = resultSet.getInt(1);
 				int companyID = resultSet.getInt(2);
-				Category category = Category.valueOf(resultSet.getString(3)); // what about case sensitivity?
+				Category category = MyUtils.convertIntToCategory(resultSet.getInt(3)); // what about case sensitivity?
 				String title = resultSet.getString(4);
 				String description = resultSet.getString(5);
 				Date startDate = MyUtils.convertSqlToUtil(resultSet.getDate(6));
@@ -166,16 +163,24 @@ public class CouponsDBDAO implements CouponsDAO {
 
 	public void addCouponPurchase(int customerID, int couponID) throws outOfStockException {
 		connection = null;
-		if (getOneCoupon(couponID).getAmount() > 0) {
+		Coupon c1 = getOneCoupon(couponID);
+
+		if (c1.getAmount() > 0) {
 			try {
 				connection = ConnectionPool.getInstance().getConnection();
 
-				String sql = "INSERT INTO `coupon_system`.`customers_vs_coupons` (`customer_id`, `coupon_id`) VALUES (?, ?); UPDATE `coupon_system`.`coupons` SET `amount` = ? WHERE (`id` = ?);";
+				String sql = "INSERT INTO `coupon_system`.`customers_vs_coupons` (`customer_id`, `coupon_id`) VALUES (?, ?);";
 				PreparedStatement statement = connection.prepareStatement(sql);
 				statement.setInt(1, customerID);
 				statement.setInt(2, couponID);
-				statement.setInt(3, getOneCoupon(couponID).getAmount() - 1);
-				statement.setInt(4, couponID);
+
+				statement.executeUpdate();
+
+//				sql = "UPDATE `coupon_system`.`coupons` SET `amount` = ? WHERE (`id` = ?);";
+//				statement = connection.prepareStatement(sql);
+//
+//				statement.setInt(1, c1.getAmount() - 1);
+//				statement.setInt(2, couponID);
 
 				statement.executeUpdate();
 			} catch (Exception e) {
@@ -190,31 +195,38 @@ public class CouponsDBDAO implements CouponsDAO {
 	}
 
 	public void deleteCouponPurchase(int customerID, int couponID) throws noSuchCouponException {
-		if (doesCouponExist(couponID)==true) {
+
+		Coupon c1 = getOneCoupon(couponID);
+		if (doesCouponExist(couponID) == true) {
 			connection = null;
-			
+
 			try {
 				connection = ConnectionPool.getInstance().getConnection();
 
-				String sql = "DELETE FROM `coupon_system`.`customers_vs_coupons` WHERE (`customer_id` = ?) and (`coupon_id` = ?); UPDATE `coupon_system`.`coupons` SET `amount` = ? WHERE (`id` = ?);";
+				String sql = "DELETE FROM `coupon_system`.`customers_vs_coupons` WHERE (`customer_id` = ?) and (`coupon_id` = ?);\r\n";
 				PreparedStatement statement = connection.prepareStatement(sql);
 				statement.setInt(1, customerID);
 				statement.setInt(2, couponID);
-				statement.setInt(3, getOneCoupon(couponID).getAmount() + 1);
-				statement.setInt(4, couponID);
 
 				statement.executeUpdate();
+
+//				sql = "UPDATE `coupon_system`.`coupons` SET `amount` = ? WHERE (`id` = ?);";
+//				statement = connection.prepareStatement(sql);
+//				statement.setInt(1, c1.getAmount() + 1);
+//				statement.setInt(2, couponID);
+//
+//				statement.executeUpdate();
+//				c1.setAmount(c1.getAmount() + 1);
 			} catch (Exception e) {
 				e.getMessage();
 			} finally {
 				ConnectionPool.getInstance().returnConnection(connection);
 			}
-		}
-		else {
+		} else {
 			throw new noSuchCouponException("This coupon does not exist");
 		}
-		
-		} 
+
+	}
 
 	public boolean doesCouponExist(int couponID) {
 		connection = null;
@@ -241,7 +253,5 @@ public class CouponsDBDAO implements CouponsDAO {
 		return false;
 
 	}
-
-	
 
 }
