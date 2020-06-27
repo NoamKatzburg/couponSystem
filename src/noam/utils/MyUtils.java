@@ -30,7 +30,6 @@ public class MyUtils {
 		return null;
 	}
 
-	
 	public static int convertStringToInt(String categoryName) {
 		switch (categoryName) {
 		case "Food":
