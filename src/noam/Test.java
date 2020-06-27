@@ -42,12 +42,12 @@ public class Test {
 
 		CouponsDBDAO cuDbdao = new CouponsDBDAO();
 
-		Coupon cu1 = new Coupon(1, Category.Electricty, "new", "bolts and more", new Date(3, 9, 2020),
-				new Date(10, 9, 2020), 21, 22, "img");
-		Coupon cu2 = new Coupon(1, Category.Food, "1+1", "eat more", new Date(3, 10, 2020), new Date(10, 10, 2020), 100,
+		Coupon cu1 = new Coupon(1, Category.Electricty, "new", "bolts and more", new Date(120, 9, 03),
+				new Date(120, 9, 17), 21, 22, "img");
+		Coupon cu2 = new Coupon(1, Category.Food, "1+1", "eat more", new Date(120, 10, 10), new Date(120, 10, 20), 100,
 				5, "img");
-		Coupon cu3 = new Coupon(3, Category.Restaurant, "come to us", "free meal", new Date(7, 10, 2020),
-				new Date(20, 10, 2020), 5, 123, "img");
+		Coupon cu3 = new Coupon(3, Category.Restaurant, "come to us", "free meal", new Date(120, 10, 01),
+				new Date(120, 10, 20), 5, 123, "img");
 
 		testCouponsClass(cuDbdao, cu1, cu2, cu3);
 
