@@ -2,6 +2,9 @@ package noam.beans;
 
 import java.util.ArrayList;
 
+import noam.exceptions.CannotChangeIdException;
+import noam.exceptions.CannotChangeNameException;
+
 public class Company {
 
 	private int id;
@@ -33,16 +36,24 @@ public class Company {
 		return id;
 	}
 
-	public void setId(int id) {
-		this.id = id;
-	}
+	public void setId(int id) throws CannotChangeIdException {
+		if (id == 0) {
+			this.id = id;
+		}else {
+			throw new CannotChangeIdException("You cannot change an id once set");
+		}
+    }
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setName(String name) throws CannotChangeNameException {
+		if (name == null) {
+			this.name = name;
+		}else {
+			throw new CannotChangeNameException("You cannot change a name once set");
+		}
 	}
 
 	public String getEmail() {

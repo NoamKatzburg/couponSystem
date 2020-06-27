@@ -8,7 +8,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import noam.beans.Company;
 import noam.dao.CompaniesDAO;
 import noam.db.ConnectionPool;
@@ -29,7 +28,6 @@ public class CompaniesDBDAO implements CompaniesDAO {
 			statement.setString(2, password);
 			ResultSet resultSet = statement.executeQuery();
 
-			
 			if (resultSet.next()) {
 				return true;
 			}
@@ -63,7 +61,7 @@ public class CompaniesDBDAO implements CompaniesDAO {
 
 	}
 
-	public void updateCompany(Company company, int companyId)  {
+	public void updateCompany(Company company, int companyId) {
 
 		connection = null;
 		try {
@@ -84,7 +82,7 @@ public class CompaniesDBDAO implements CompaniesDAO {
 
 	}
 
-	public void deleteCompany(int companyID)  {
+	public void deleteCompany(int companyID) {
 		connection = null;
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
@@ -142,6 +140,37 @@ public class CompaniesDBDAO implements CompaniesDAO {
 
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setInt(1, companyID);
+			ResultSet resultSet = statement.executeQuery();
+
+			while (resultSet.next()) {
+				int id = resultSet.getInt(1);
+				String name = resultSet.getString(2);
+				String email = resultSet.getString(3);
+				String password = resultSet.getString(4);
+
+				c1 = new Company(id, name, email, password);
+			}
+
+		} catch (Exception e) {
+			e.getMessage();
+		} finally {
+			ConnectionPool.getInstance().returnConnection(connection);
+		}
+		return c1;
+	}
+
+	public Company getOneCompany(String companyName, String companyEmail) {
+		Company c1 = null;
+
+		connection = null;
+		try {
+			connection = ConnectionPool.getInstance().getConnection();
+
+			String sql = "SELECT * FROM `COUPON_SYSTEM`.`COMPANIES` WHERE `name`= ? or `email`= ?;";
+
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setString(1, companyName);
+			statement.setString(2, companyEmail);
 			ResultSet resultSet = statement.executeQuery();
 
 			while (resultSet.next()) {
