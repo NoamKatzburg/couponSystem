@@ -1,8 +1,8 @@
 package noam.exceptions;
 
-public class outOfStockException extends Exception {
+public class OutOfStockException extends Exception {
 
-	public outOfStockException(String message) {
+	public OutOfStockException(String message) {
 		super(message);
 	}
 

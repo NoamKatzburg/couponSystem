@@ -1,8 +1,8 @@
 package noam.exceptions;
 
-public class noSuchCouponException extends Exception {
+public class NoSuchCouponException extends Exception {
 
-	public noSuchCouponException(String message) {
+	public NoSuchCouponException(String message) {
 		super(message);
 		
 	}
