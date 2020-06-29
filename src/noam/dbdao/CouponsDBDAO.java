@@ -14,13 +14,14 @@ import noam.beans.Coupon;
 import noam.beans.Customer;
 import noam.dao.CouponsDAO;
 import noam.db.ConnectionPool;
-import noam.exceptions.noSuchCouponException;
-import noam.exceptions.outOfStockException;
+import noam.exceptions.NoSuchCouponException;
+import noam.exceptions.OutOfStockException;
 import noam.utils.MyUtils;
 
 public class CouponsDBDAO implements CouponsDAO {
 
 	private Connection connection;
+	private CategoriesDBDAO categoriesDBDAO = new CategoriesDBDAO();
 
 	public void addCoupon(Coupon coupon) {
 		connection = null;
@@ -106,7 +107,7 @@ public class CouponsDBDAO implements CouponsDAO {
 			while (resultSet.next()) {
 				int id = resultSet.getInt(1);
 				int companyID = resultSet.getInt(2);
-				Category category = MyUtils.convertIntToCategory(resultSet.getInt(3));
+				Category category = categoriesDBDAO.convertIntToCategory(resultSet.getInt(3));
 				String title = resultSet.getString(4);
 				String description = resultSet.getString(5);
 				Date startDate = MyUtils.convertSqlToUtil(resultSet.getDate(6));
@@ -141,7 +142,8 @@ public class CouponsDBDAO implements CouponsDAO {
 			while (resultSet.next()) {
 				int id = resultSet.getInt(1);
 				int companyID = resultSet.getInt(2);
-				Category category = MyUtils.convertIntToCategory(resultSet.getInt(3)); // what about case sensitivity?
+				Category category = categoriesDBDAO.convertIntToCategory(resultSet.getInt(3)); // what about case
+																								// sensitivity?
 				String title = resultSet.getString(4);
 				String description = resultSet.getString(5);
 				Date startDate = MyUtils.convertSqlToUtil(resultSet.getDate(6));
@@ -161,7 +163,7 @@ public class CouponsDBDAO implements CouponsDAO {
 		return c1;
 	}
 
-	public void addCouponPurchase(int customerID, int couponID) throws outOfStockException {
+	public void addCouponPurchase(int customerID, int couponID) throws OutOfStockException {
 		connection = null;
 		Coupon c1 = getOneCoupon(couponID);
 
@@ -189,12 +191,12 @@ public class CouponsDBDAO implements CouponsDAO {
 				ConnectionPool.getInstance().returnConnection(connection);
 			}
 		} else {
-			throw new outOfStockException("This coupon is out of stock");
+			throw new OutOfStockException("This coupon is out of stock");
 		}
 
 	}
 
-	public void deleteCouponPurchase(int customerID, int couponID) throws noSuchCouponException {
+	public void deleteCouponPurchase(int customerID, int couponID) throws NoSuchCouponException {
 
 		Coupon c1 = getOneCoupon(couponID);
 		if (doesCouponExist(couponID) == true) {
@@ -223,7 +225,7 @@ public class CouponsDBDAO implements CouponsDAO {
 				ConnectionPool.getInstance().returnConnection(connection);
 			}
 		} else {
-			throw new noSuchCouponException("This coupon does not exist");
+			throw new NoSuchCouponException("This coupon does not exist");
 		}
 
 	}
