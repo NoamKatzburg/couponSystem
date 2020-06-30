@@ -7,21 +7,26 @@ import noam.beans.Category;
 import noam.beans.Company;
 import noam.beans.Coupon;
 import noam.beans.Customer;
+import noam.dao.CategoriesDAO;
 import noam.db.Database;
+import noam.dbdao.CategoriesDBDAO;
 import noam.dbdao.CompaniesDBDAO;
 import noam.dbdao.CouponsDBDAO;
 import noam.dbdao.CustomersDBDAO;
-import noam.exceptions.noSuchCouponException;
-import noam.exceptions.outOfStockException;
+import noam.exceptions.CannotChangeNameException;
+import noam.exceptions.NoSuchCouponException;
+import noam.exceptions.OutOfStockException;
 
 public class Test {
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, InterruptedException,
-			outOfStockException, noSuchCouponException {
+			OutOfStockException, NoSuchCouponException, CannotChangeNameException {
 
 		Class.forName("com.mysql.cj.jdbc.Driver");
 
 		Database.initDB();
+		CategoriesDAO categoriesDBDAO = new CategoriesDBDAO();
+		categoriesDBDAO.initCategoryTable();
 
 		CompaniesDBDAO companiesDBDAO = new CompaniesDBDAO();
 
@@ -53,21 +58,27 @@ public class Test {
 
 	}
 
-	public static void testCompanyClass(CompaniesDBDAO cDbdao, Company c1, Company c2, Company c3) throws SQLException {
+	public static void testCompanyClass(CompaniesDBDAO cDbdao, Company c1, Company c2, Company c3)
+			throws SQLException, CannotChangeNameException {
 		// Checking add company
 		cDbdao.addCompany(c1);
 		cDbdao.addCompany(c2);
 		cDbdao.addCompany(c3);
 
 		// Checking update company
-		c1.setName("comp2");
+		try {
+			c1.setName("comp2");
+		} catch (CannotChangeNameException e) {
+			e.getMessage();
+		}
+
 		cDbdao.updateCompany(c1, 1);
 
 		// checking is company exist
 		System.out.println("if this works, should return true: " + cDbdao.isCompanyExist("com@pany", "12354"));
 
 		// checking delete company
-		cDbdao.deleteCompany(2);
+		// cDbdao.deleteCompany(2);
 
 		// checking getAllCompanies
 		System.out.println(cDbdao.getAllCompanies());
@@ -79,7 +90,7 @@ public class Test {
 	}
 
 	public static void testCouponsClass(CouponsDBDAO cuDbdao, Coupon cu1, Coupon cu2, Coupon cu3)
-			throws outOfStockException, noSuchCouponException {
+			throws OutOfStockException, NoSuchCouponException {
 
 		// Checking add coupon
 		cuDbdao.addCoupon(cu1);
@@ -91,23 +102,23 @@ public class Test {
 		cuDbdao.updateCoupon(cu1, 1);
 
 		// checking delete coupon
-		cuDbdao.deleteCoupon(2);
+		// cuDbdao.deleteCoupon(2);
 
 		// checking getAllCoupons
 		System.out.println(cuDbdao.getAllCoupons());
 
-		// checking get one coupon 
+		// checking get one coupon
 		System.out.println("onr coupon " + cuDbdao.getOneCoupon(3));
 
 		/*
-		 * check coupon purchase can only do after i add customers 
+		 * check coupon purchase can only do after i add customers
 		 */
-		 cuDbdao.addCouponPurchase(1, 3);
+		cuDbdao.addCouponPurchase(1, 3);
 
 		/*
-		 * check delete coupon purchase can only do after i add customers 
+		 * check delete coupon purchase can only do after i add customers
 		 */
-		cuDbdao.deleteCouponPurchase(1, 3);
+		// cuDbdao.deleteCouponPurchase(1, 3);
 
 		// checking does coupon exist
 
@@ -134,7 +145,7 @@ public class Test {
 		cDbdao.updateCustomer(c3, 3);
 
 		// checking delete customer
-		cDbdao.deleteCustomer(2);
+		// cDbdao.deleteCustomer(2);
 
 		// checking get all customers
 		System.out.println(cDbdao.getAllCustomers());

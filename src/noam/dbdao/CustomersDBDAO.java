@@ -163,5 +163,36 @@ public class CustomersDBDAO implements CustomersDAO {
 		return c1;
 
 	}
+	
+	public Customer getOneCustomerByEmail(String custEmail) {
+		Customer c1 = null;
+		connection = null;
+		try {
+			connection = ConnectionPool.getInstance().getConnection();
+
+			String sql = "SELECT * FROM `coupon_system`.`customers` WHERE (`email`= ?);";
+
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setString(1, custEmail);
+			ResultSet resultSet = statement.executeQuery();
+
+			while (resultSet.next()) {
+				int id = resultSet.getInt(1);
+				String firstName = resultSet.getString(2);
+				String lastName = resultSet.getString(3);
+				String email = resultSet.getString(4);
+				String password = resultSet.getString(5);
+
+				c1 = new Customer(id, firstName, lastName, email, password);
+			}
+
+		} catch (Exception e) {
+			e.getMessage();
+		} finally {
+			ConnectionPool.getInstance().returnConnection(connection);
+		}
+		return c1;
+
+	}
 
 }

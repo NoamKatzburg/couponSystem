@@ -16,9 +16,17 @@ public interface CouponsDAO {
 
 	ArrayList<Coupon> getAllCoupons();
 
+	Coupon getFirstCouponByCompanyId(int companyId);
+
 	Coupon getOneCoupon(int couponID);
 
 	void addCouponPurchase(int customerID, int couponID) throws OutOfStockException;
 
 	void deleteCouponPurchase(int customerID, int couponID) throws NoSuchCouponException;
+
+	void deleteAllCouponPurchasesByCouponId(int couponID) throws NoSuchCouponException;
+	
+	void deleteAllCouponPurchasesByCustomerId(int custId);
+
+	boolean doesCouponExist(int couponID);
 }

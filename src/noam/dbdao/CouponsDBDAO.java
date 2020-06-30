@@ -127,6 +127,39 @@ public class CouponsDBDAO implements CouponsDAO {
 		return (ArrayList<Coupon>) coupons;
 	}
 
+	public Coupon getFirstCouponByCompanyId(int companyId) {
+		Coupon c1 = null;
+		connection = null;
+		try {
+			connection = ConnectionPool.getInstance().getConnection();
+			String sql = "SELECT * FROM `coupon_system`.`coupons` WHERE `company_id` = ? LIMIT 1;";
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setInt(1, companyId);
+			ResultSet resultSet = statement.executeQuery();
+
+			while (resultSet.next()) {
+				int id = resultSet.getInt(1);
+				int companyID = resultSet.getInt(2);
+				Category category = categoriesDBDAO.convertIntToCategory(resultSet.getInt(3)); // what about case																				// sensitivity?
+				String title = resultSet.getString(4);
+				String description = resultSet.getString(5);
+				Date startDate = MyUtils.convertSqlToUtil(resultSet.getDate(6));
+				Date endDate = MyUtils.convertSqlToUtil(resultSet.getDate(7));
+				int amount = resultSet.getInt(8);
+				double price = resultSet.getDouble(9);
+				String image = resultSet.getString(10);
+
+				c1 = new Coupon(id, companyID, category, title, description, startDate, endDate, amount, price, image);
+			}
+
+		} catch (Exception e) {
+			e.getMessage();
+		} finally {
+			ConnectionPool.getInstance().returnConnection(connection);
+		}
+		return c1;
+	}
+
 	public Coupon getOneCoupon(int couponID) {
 		Coupon c1 = null;
 		connection = null;
@@ -229,6 +262,67 @@ public class CouponsDBDAO implements CouponsDAO {
 		}
 
 	}
+
+	public void deleteAllCouponPurchasesByCouponId(int couponID) throws NoSuchCouponException {
+
+		Coupon c1 = getOneCoupon(couponID);
+		if (doesCouponExist(couponID) == true) {
+			connection = null;
+
+			try {
+				connection = ConnectionPool.getInstance().getConnection();
+
+				String sql = "DELETE FROM `coupon_system`.`customers_vs_coupons` WHERE (`coupon_id` = ?);\r\n";
+				PreparedStatement statement = connection.prepareStatement(sql);
+				statement.setInt(1, couponID);
+
+				statement.executeUpdate();
+
+//				sql = "UPDATE `coupon_system`.`coupons` SET `amount` = ? WHERE (`id` = ?);";
+//				statement = connection.prepareStatement(sql);
+//				statement.setInt(1, c1.getAmount() + 1);
+//				statement.setInt(2, couponID);
+//
+//				statement.executeUpdate();
+//				c1.setAmount(c1.getAmount() + 1);
+			} catch (Exception e) {
+				e.getMessage();
+			} finally {
+				ConnectionPool.getInstance().returnConnection(connection);
+			}
+		} else {
+			throw new NoSuchCouponException("This coupon does not exist");
+		}
+
+	}
+	
+	public void deleteAllCouponPurchasesByCustomerId(int custId) {
+
+				connection = null;
+
+			try {
+				connection = ConnectionPool.getInstance().getConnection();
+
+				String sql = "SELECT * FROM coupon_system.customers_vs_coupons WHERE `customer_id` = ?;";
+				PreparedStatement statement = connection.prepareStatement(sql);
+				statement.setInt(1, custId);
+
+				statement.executeUpdate();
+
+//				sql = "UPDATE `coupon_system`.`coupons` SET `amount` = ? WHERE (`id` = ?);";
+//				statement = connection.prepareStatement(sql);
+//				statement.setInt(1, c1.getAmount() + 1);
+//				statement.setInt(2, couponID);
+//
+//				statement.executeUpdate();
+//				c1.setAmount(c1.getAmount() + 1);
+			} catch (Exception e) {
+				e.getMessage();
+			} finally {
+				ConnectionPool.getInstance().returnConnection(connection);
+			}
+		} 
+	
 
 	public boolean doesCouponExist(int couponID) {
 		connection = null;
