@@ -67,12 +67,12 @@ public class CompaniesDBDAO implements CompaniesDAO {
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
-			String sql = "UPDATE `coupon_system`.`companies` SET `name` = ?, `email` = ?, `password` = ? WHERE (`id` = ?);\r\n";
+			String sql = "UPDATE `coupon_system`.`companies` SET `email` = ?, `password` = ? WHERE (`id` = ?);\r\n";
+
 			PreparedStatement statement = connection.prepareStatement(sql);
-			statement.setString(1, company.getName());
-			statement.setString(2, company.getEmail());
-			statement.setString(3, company.getPassword());
-			statement.setInt(4, companyId);
+			statement.setString(1, company.getEmail());
+			statement.setString(2, company.getPassword());
+			statement.setInt(3, companyId);
 			statement.executeUpdate();
 		} catch (Exception e) {
 			e.getMessage();

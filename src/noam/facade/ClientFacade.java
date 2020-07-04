@@ -13,4 +13,5 @@ public abstract class ClientFacade {
 	protected CouponsDAO couponsDAO;
 	
 	public abstract boolean login(String email, String password);
+
 }

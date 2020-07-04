@@ -1,11 +1,14 @@
 package noam.facade;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.List;
 
 import noam.beans.Company;
 import noam.beans.Coupon;
 import noam.beans.Customer;
+import noam.dbdao.CompaniesDBDAO;
+import noam.dbdao.CouponsDBDAO;
+import noam.dbdao.CustomersDBDAO;
 import noam.exceptions.NoSuchCouponException;
 
 public class AdminFacade extends ClientFacade {
@@ -18,24 +21,51 @@ public class AdminFacade extends ClientFacade {
 	}
 
 	public void addCompany(Company company) throws SQLException {
-		if (companiesDAO.getOneCompany(company.getName(), company.getEmail()) == null) {
+		companiesDAO = new CompaniesDBDAO();
+		if (companiesDAO.getAllCompanies() == null) {
+			companiesDAO.addCompany(company);
+		} else {
+			List<Company> companies = companiesDAO.getAllCompanies();
+			for (Company comp : companies) {
+				if (comp.getName() == company.getName()) {
+					System.out.println("Name is already registered, company not added");
+					return;
+				}
+				if (comp.getEmail() == company.getEmail()) {
+					System.out.println("Email is already registered, company not added");
+					return;
+				}
+			}
+
 			companiesDAO.addCompany(company);
 		}
+
 	}
 
-	public void updateCompany(Company company) {
-		companiesDAO.updateCompany(company, company.getId());
+	public void updateCompany(Company company, int id) {
+		companiesDAO = new CompaniesDBDAO();
+		companiesDAO.updateCompany(company, id);
 	}
 
-	public void deleteCompany(Company company) throws NoSuchCouponException {
-		Coupon c1 = null;
-		c1 = couponsDAO.getFirstCouponByCompanyId(company.getId()); // redundant?
-		couponsDAO.deleteAllCouponPurchasesByCouponId(c1.getId());
-		couponsDAO.deleteCoupon(c1.getId());
-		companiesDAO.deleteCompany(company.getId());
+	public void deleteCompany(int companyId) throws NoSuchCouponException {
+		couponsDAO = new CouponsDBDAO();
+		companiesDAO = new CompaniesDBDAO();
+		List<Coupon> allCoupons = couponsDAO.getAllCoupons();
+		System.out.println(allCoupons);
+		for (Coupon coupon : allCoupons) {
+			if (coupon.getCompanyID() == companyId) {
+				couponsDAO.deleteCouponPurchaseById(coupon.getId());
+			}
+		}
+
+		for (Coupon coupon : allCoupons) {
+			couponsDAO.deleteCoupon(coupon.getId());
+		}
+		companiesDAO.deleteCompany(companyId);
+
 	}
 
-	public ArrayList<Company> getAllCompanies() {
+	public List<Company> getAllCompanies() {
 		return companiesDAO.getAllCompanies();
 
 	}
@@ -46,15 +76,18 @@ public class AdminFacade extends ClientFacade {
 	}
 
 	public void addCustomer(Customer customer) throws EmailExistsException {
-		if (customersDAO.getOneCustomerByEmail(customer.getEmail())==null) {
-			customersDAO.addCustomer(customer);
-		}else {
-			throw new EmailExistsException("This email is already registered");
+		customersDAO = new CustomersDBDAO();
+		List<Customer> customers = customersDAO.getAllCustomers();
+		for (Customer cust : customers) {
+			if (customer.getEmail() == cust.getEmail()) {
+				throw new EmailExistsException("This email is already registered");
+			}
 		}
+		customersDAO.addCustomer(customer);
 	}
 
-	public void updateCustomer(Customer customer) {
-		customersDAO.updateCustomer(customer, customer.getId());
+	public void updateCustomer(Customer customer, int id) {
+		customersDAO.updateCustomer(customer, id);
 	}
 
 	public void deleteCustomer(int customerId) {
@@ -62,7 +95,7 @@ public class AdminFacade extends ClientFacade {
 		customersDAO.deleteCustomer(customerId);
 	}
 
-	public ArrayList<Customer> getAllCustomers() {
+	public List<Customer> getAllCustomers() {
 		return customersDAO.getAllCustomers();
 
 	}

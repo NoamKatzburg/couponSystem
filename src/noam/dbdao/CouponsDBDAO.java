@@ -11,7 +11,6 @@ import java.util.List;
 
 import noam.beans.Category;
 import noam.beans.Coupon;
-import noam.beans.Customer;
 import noam.dao.CouponsDAO;
 import noam.db.ConnectionPool;
 import noam.exceptions.NoSuchCouponException;
@@ -230,8 +229,6 @@ public class CouponsDBDAO implements CouponsDAO {
 	}
 
 	public void deleteCouponPurchase(int customerID, int couponID) throws NoSuchCouponException {
-
-		Coupon c1 = getOneCoupon(couponID);
 		if (doesCouponExist(couponID) == true) {
 			connection = null;
 
@@ -263,9 +260,7 @@ public class CouponsDBDAO implements CouponsDAO {
 
 	}
 
-	public void deleteAllCouponPurchasesByCouponId(int couponID) throws NoSuchCouponException {
-
-		Coupon c1 = getOneCoupon(couponID);
+	public void deleteCouponPurchaseById(int couponID) throws NoSuchCouponException {
 		if (doesCouponExist(couponID) == true) {
 			connection = null;
 

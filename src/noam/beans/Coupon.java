@@ -28,8 +28,6 @@ public class Coupon {
 		this.price = price;
 		this.image = image;
 	}
-	
-	
 
 	public Coupon(int companyID, Category category, String title, String description, Date startDate, Date endDate,
 			int amount, double price, String image) {
@@ -44,7 +42,9 @@ public class Coupon {
 		this.image = image;
 	}
 
+	public Coupon() {
 
+	}
 
 	public int getId() {
 		return id;

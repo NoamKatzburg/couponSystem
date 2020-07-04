@@ -20,16 +20,22 @@ public class Company {
 		this.password = password;
 		this.coupons = coupons;
 	}
+
 	public Company(int id, String name, String email, String password) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
 		this.password = password;
 	}
+
 	public Company(String name, String email, String password) {
 		this.name = name;
 		this.email = email;
 		this.password = password;
+	}
+
+	public Company() {
+
 	}
 
 	public int getId() {
@@ -39,21 +45,17 @@ public class Company {
 	public void setId(int id) throws CannotChangeIdException {
 		if (id == 0) {
 			this.id = id;
-		}else {
+		} else {
 			throw new CannotChangeIdException("You cannot change an id once set");
 		}
-    }
+	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) throws CannotChangeNameException {
-		if (name == null) {
-			this.name = name;
-		}else {
-			throw new CannotChangeNameException("You cannot change a name once set");
-		}
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getEmail() {

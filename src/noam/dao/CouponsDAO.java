@@ -24,7 +24,7 @@ public interface CouponsDAO {
 
 	void deleteCouponPurchase(int customerID, int couponID) throws NoSuchCouponException;
 
-	void deleteAllCouponPurchasesByCouponId(int couponID) throws NoSuchCouponException;
+	void deleteCouponPurchaseById(int couponID) throws NoSuchCouponException;
 	
 	void deleteAllCouponPurchasesByCustomerId(int custId);
 
