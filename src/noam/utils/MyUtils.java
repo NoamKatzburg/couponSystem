@@ -4,7 +4,9 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 
+import noam.beans.Category;
 import noam.beans.Company;
+import noam.beans.Coupon;
 import noam.beans.Customer;
 
 public class MyUtils {
@@ -14,13 +16,18 @@ public class MyUtils {
 //		return sDate;
 //	}
 
-	public static java.util.Date convertSqlToUtil(java.sql.Date sDate) {
-		java.util.Date uDate = new java.util.Date(sDate.getTime());
-		return uDate;
-	}
+//	public static java.util.Date convertSqlToUtil(java.sql.Date sDate) {
+//		java.util.Date uDate = new java.util.Date(sDate.getTime());
+//		return uDate;
+//	}
 
+	@SuppressWarnings("deprecation")
 	public static java.sql.Date convertUtilToSql(java.util.Date date) {
 		return new java.sql.Date(date.getYear() - 1900, date.getMonth() - 1, date.getDate() + 1);
+	}
+	
+	public static java.util.Date convertSqlToUtil(java.sql.Date date) {
+		return new java.util.Date(date.getYear() - 1900, date.getMonth() - 1, date.getDate() + 1);
 	}
 
 	public static java.util.Date calcDate(int DD, int MM, int YYYY) {
@@ -32,6 +39,52 @@ public class MyUtils {
 
 		// local date + atStartOfDay() + default time zone + toInstant() = Date
 		return java.util.Date.from(localDate.atStartOfDay(defaultZoneId).toInstant());
+	}
+
+	public static Category convertIntToCategory(int categoryId) {
+		switch (categoryId) {
+		case 1:
+			return Category.Food;
+		case 2:
+			return Category.Electricty;
+		case 3:
+			return Category.Restaurant;
+		case 4:
+			return Category.Vacation;
+		default:
+			break;
+		}
+		return null;
+	}
+
+	public static int convertStringToInt(String categoryName) {
+		switch (categoryName) {
+		case "Food":
+			return 0;
+		case "Electricty":
+			return 1;
+		case "Restaurant":
+			return 2;
+		case "Vacation":
+			return 3;
+		default:
+			break;
+		}
+
+		return 0;
+	}
+
+	public static void classSeparator(String className) {
+		System.out.println();
+		System.out.println();
+		System.out.println("**************************************************************");
+		System.out.println("**************************************************************");
+		System.out.println("***************************" + className + "***************************");
+		System.out.println("**************************************************************");
+		System.out.println("**************************************************************");
+		System.out.println();
+		System.out.println();
+
 	}
 
 	public static void printTestLine(String s) {
@@ -52,9 +105,10 @@ public class MyUtils {
 			System.out.printf("%10s %10s %20s %10s %10s", (com.get(i)).getId(), (com.get(i)).getName(),
 					(com.get(i)).getEmail(), (com.get(i)).getPassword(), (com.get(i)).getCoupons());
 			System.out.println();
+		}
+
 	}
-		
-}
+
 	public static void printCustomersTable(List<Customer> customers) {
 		System.out.printf("%10s %10s %10s %20s %10s %10s", "id", "first", "last", "email", "password", "coupons");
 		System.out.println();
@@ -64,6 +118,22 @@ public class MyUtils {
 					(customers.get(i)).getFirstName(), (customers.get(i)).getLastName(), (customers.get(i)).getEmail(),
 					(customers.get(i)).getPassword(), (customers.get(i)).getCoupons());
 			System.out.println();
+		}
 	}
-}
+
+	public static void printCouponsTable(List<Coupon> coupons) {
+		System.out.printf("%10s %10s %20s %10s %20s %10s %10s %10s %10s %10s", "id", "companyID", "category", "title",
+				"description", "startDate", "endDate", "amount", "price", "img");
+		System.out.println();
+		System.out.print("===============================================================");
+		MyUtils.separatorLine();
+		for (int i = 0; i < coupons.size(); i++) {
+			System.out.printf("%10s %10s %20s %10s %20s %10s %10s %10s %10s %10s", (coupons.get(i)).getId(),
+					(coupons.get(i)).getCompanyID(), (coupons.get(i)).getCategory(),
+					(coupons.get(i)).getTitle(), (coupons.get(i)).getDescription(), (coupons.get(i)).getStartDate(),
+					(coupons.get(i)).getEndDate(), (coupons.get(i)).getAmount(), (coupons.get(i)).getPrice(),
+					(coupons.get(i)).getImage());
+			System.out.println();
+		}
+	}
 }
