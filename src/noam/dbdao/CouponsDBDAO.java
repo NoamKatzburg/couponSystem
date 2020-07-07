@@ -54,18 +54,17 @@ public class CouponsDBDAO implements CouponsDAO {
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
-			String sql = "UPDATE `coupon_system`.`coupons` SET `company_id` = ?, `category_id` = ?, `title` = ?, `description` = ?, `start_date` = ?, `end_date` = ?, `amount` = ?, `price` = ?, `image` = ? WHERE (`id` = ?);\r\n";
+			String sql = "UPDATE `coupon_system`.`coupons` SET `category_id` = ?, `title` = ?, `description` = ?, `start_date` = ?, `end_date` = ?, `amount` = ?, `price` = ?, `image` = ? WHERE (`id` = ?);\r\n";
 			PreparedStatement statement = connection.prepareStatement(sql);
-			statement.setInt(1, coupon.getCompanyID());
-			statement.setInt(2, coupon.getCategory().ordinal() + 1);
-			statement.setString(3, coupon.getTitle());
-			statement.setString(4, coupon.getDescription());
-			statement.setDate(5, MyUtils.convertUtilToSql(coupon.getStartDate()));
-			statement.setDate(6, MyUtils.convertUtilToSql(coupon.getEndDate()));
-			statement.setInt(7, coupon.getAmount());
-			statement.setDouble(8, coupon.getPrice());
-			statement.setString(9, coupon.getImage());
-			statement.setInt(10, id);
+			statement.setInt(1, coupon.getCategory().ordinal() + 1);
+			statement.setString(2, coupon.getTitle());
+			statement.setString(3, coupon.getDescription());
+			statement.setDate(4, MyUtils.convertUtilToSql(coupon.getStartDate()));
+			statement.setDate(5, MyUtils.convertUtilToSql(coupon.getEndDate()));
+			statement.setInt(6, coupon.getAmount());
+			statement.setDouble(7, coupon.getPrice());
+			statement.setString(8, coupon.getImage());
+			statement.setInt(9, id);
 			statement.executeUpdate();
 		} catch (Exception e) {
 			e.getMessage();
@@ -109,8 +108,8 @@ public class CouponsDBDAO implements CouponsDAO {
 				Category category = categoriesDBDAO.convertIntToCategory(resultSet.getInt(3));
 				String title = resultSet.getString(4);
 				String description = resultSet.getString(5);
-				Date startDate = MyUtils.convertSqlToUtil(resultSet.getDate(6));
-				Date endDate = MyUtils.convertSqlToUtil(resultSet.getDate(7));
+				Date startDate = resultSet.getDate(6);
+				Date endDate = resultSet.getDate(7);
 				int amount = resultSet.getInt(8);
 				double price = resultSet.getDouble(9);
 				String image = resultSet.getString(10);
@@ -142,8 +141,8 @@ public class CouponsDBDAO implements CouponsDAO {
 				Category category = categoriesDBDAO.convertIntToCategory(resultSet.getInt(3)); // what about case																				// sensitivity?
 				String title = resultSet.getString(4);
 				String description = resultSet.getString(5);
-				Date startDate = MyUtils.convertSqlToUtil(resultSet.getDate(6));
-				Date endDate = MyUtils.convertSqlToUtil(resultSet.getDate(7));
+				Date startDate = resultSet.getDate(6);
+				Date endDate = resultSet.getDate(7);
 				int amount = resultSet.getInt(8);
 				double price = resultSet.getDouble(9);
 				String image = resultSet.getString(10);
@@ -178,8 +177,8 @@ public class CouponsDBDAO implements CouponsDAO {
 																								// sensitivity?
 				String title = resultSet.getString(4);
 				String description = resultSet.getString(5);
-				Date startDate = MyUtils.convertSqlToUtil(resultSet.getDate(6));
-				Date endDate = MyUtils.convertSqlToUtil(resultSet.getDate(7));
+				Date startDate = resultSet.getDate(6);
+				Date endDate = resultSet.getDate(7);
 				int amount = resultSet.getInt(8);
 				double price = resultSet.getDouble(9);
 				String image = resultSet.getString(10);
