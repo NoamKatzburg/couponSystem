@@ -1,5 +1,7 @@
 package noam.facade;
 
+import java.sql.SQLException;
+
 import noam.dao.CompaniesDAO;
 import noam.dao.CouponsDAO;
 import noam.dao.CustomersDAO;
@@ -12,6 +14,6 @@ public abstract class ClientFacade {
 	
 	protected CouponsDAO couponsDAO;
 	
-	public abstract boolean login(String email, String password);
+	public abstract boolean login(String email, String password)  throws SQLException;
 
 }

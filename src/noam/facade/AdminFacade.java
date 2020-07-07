@@ -105,4 +105,9 @@ public class AdminFacade extends ClientFacade {
 
 	}
 
+	public List<Coupon> getAllCoupons() {
+		couponsDAO = new CouponsDBDAO();
+		return couponsDAO.getAllCoupons();
+	}
+
 }
