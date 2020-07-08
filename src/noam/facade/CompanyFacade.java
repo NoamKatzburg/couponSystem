@@ -55,8 +55,9 @@ public class CompanyFacade extends ClientFacade {
 		while (iter.hasNext()) {
 			Coupon coup = iter.next();
 
-		    if (coup.getCompanyID() != companyId)
+		    if (coup.getCompanyID() != companyId) {
 		        iter.remove();
+		    }
 		}
 //		for (Coupon coupon : coupons) {
 //			if (coupon.getCompanyID() != companyId) {
@@ -68,14 +69,15 @@ public class CompanyFacade extends ClientFacade {
 
 	public List<Coupon> getCompanyCouponsByCategory(Category category, int companyId) {
 		couponsDAO = new CouponsDBDAO();
-		List<Coupon> coupons = couponsDAO.getAllCoupons();
+		List<Coupon> coupons = getCompanyCouponsById(companyId);
 		Iterator<Coupon> iter = coupons.iterator();
 
 		while (iter.hasNext()) {
 			Coupon coup = iter.next();
 
-		    if (coup.getCompanyID() != companyId && coup.getCategory() != category)
+		    if (!coup.getCategory().equals(category)) {
 		        iter.remove();
+		    }
 		}
 //		for (Coupon coupon : coupons) {
 //			if (coupon.getCompanyID() != companyId && coupon.getCategory() != category) {
@@ -88,15 +90,16 @@ public class CompanyFacade extends ClientFacade {
 
 	public List<Coupon> getCompanyCouponsByPrice(double maxPrice, int companyId) {
 		couponsDAO = new CouponsDBDAO();
-		List<Coupon> coupons = couponsDAO.getAllCoupons();
+		List<Coupon> coupons = getCompanyCouponsById(companyId);
 		
 		Iterator<Coupon> iter = coupons.iterator();
 
 		while (iter.hasNext()) {
 			Coupon coup = iter.next();
 
-		    if (coup.getCompanyID() != companyId && coup.getPrice() <= maxPrice)
+		    if (coup.getPrice() >= maxPrice) {
 		        iter.remove();
+		    }
 		}
 //		for (Coupon coupon : coupons) {
 //			if (coupon.getCompanyID() != companyId && coupon.getPrice() <= maxPrice) {
