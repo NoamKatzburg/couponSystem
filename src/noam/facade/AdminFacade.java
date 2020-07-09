@@ -97,7 +97,6 @@ public class AdminFacade extends ClientFacade {
 
 	public List<Customer> getAllCustomers() {
 		return customersDAO.getAllCustomers();
-
 	}
 
 	public Customer getOneCustomer(int customerId) {

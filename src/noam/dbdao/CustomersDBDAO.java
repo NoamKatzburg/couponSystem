@@ -103,7 +103,7 @@ public class CustomersDBDAO implements CustomersDAO {
 
 	}
 
-	public ArrayList<Customer> getAllCustomers() {
+	public List<Customer> getAllCustomers() {
 		List<Customer> customers = new ArrayList<Customer>();
 
 		connection = null;
@@ -130,7 +130,7 @@ public class CustomersDBDAO implements CustomersDAO {
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
 		}
-		return (ArrayList<Customer>) customers;
+		return  customers;
 	}
 
 	public Customer getOneCustomer(int customerID) {

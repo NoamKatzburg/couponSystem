@@ -1,6 +1,6 @@
 package noam.dao;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import noam.beans.Customer;
 
@@ -15,7 +15,7 @@ public interface CustomersDAO {
 
 	void deleteCustomer(int customerID);
 
-	ArrayList<Customer> getAllCustomers();
+	List<Customer> getAllCustomers();
 
 	Customer getOneCustomer(int customerID);
 	
