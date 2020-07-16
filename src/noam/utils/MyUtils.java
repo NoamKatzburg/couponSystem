@@ -1,15 +1,23 @@
 package noam.utils;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 
 import noam.beans.Category;
 import noam.beans.Company;
 import noam.beans.Coupon;
 import noam.beans.Customer;
+import noam.beans.CustomerVsCoupon;
+import noam.db.ConnectionPool;
 
 public class MyUtils {
+
+	private static Connection connection;
 
 //	public static java.sql.Date convertUtilToSql(java.util.Date uDate) {
 //		java.sql.Date sDate = new java.sql.Date(uDate.getTime());
@@ -25,9 +33,15 @@ public class MyUtils {
 	public static java.sql.Date convertUtilToSql(java.util.Date date) {
 		return new java.sql.Date(date.getYear() - 1900, date.getMonth() - 1, date.getDate() + 1);
 	}
-	
+
+	@SuppressWarnings("deprecation")
 	public static java.util.Date convertSqlToUtil(java.sql.Date date) {
 		return new java.util.Date(date.getYear() - 1900, date.getMonth() - 1, date.getDate() + 1);
+	}
+
+	@SuppressWarnings("deprecation")
+	public static java.util.Date fixDate(java.util.Date date) {
+		return new java.util.Date(date.getYear() - 1900, date.getMonth() - 1, date.getDate());
 	}
 
 	public static java.util.Date calcDate(int DD, int MM, int YYYY) {
@@ -129,11 +143,44 @@ public class MyUtils {
 		MyUtils.separatorLine();
 		for (int i = 0; i < coupons.size(); i++) {
 			System.out.printf("%10s %10s %20s %10s %20s %10s %10s %10s %10s %10s", (coupons.get(i)).getId(),
-					(coupons.get(i)).getCompanyID(), (coupons.get(i)).getCategory(),
-					(coupons.get(i)).getTitle(), (coupons.get(i)).getDescription(), (coupons.get(i)).getStartDate(),
-					(coupons.get(i)).getEndDate(), (coupons.get(i)).getAmount(), (coupons.get(i)).getPrice(),
-					(coupons.get(i)).getImage());
+					(coupons.get(i)).getCompanyID(), (coupons.get(i)).getCategory(), (coupons.get(i)).getTitle(),
+					(coupons.get(i)).getDescription(), (coupons.get(i)).getStartDate(), (coupons.get(i)).getEndDate(),
+					(coupons.get(i)).getAmount(), (coupons.get(i)).getPrice(), (coupons.get(i)).getImage());
 			System.out.println();
 		}
+	}
+
+	public static void printCouponsVsCustomersTable() {
+		List<CustomerVsCoupon> purchases = new ArrayList<>();
+		connection = null;
+		try {
+			connection = ConnectionPool.getInstance().getConnection();
+
+			String sql = "SELECT * FROM coupon_system.customers_vs_coupons;";
+
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+
+			while (resultSet.next()) {
+				int customerId = resultSet.getInt(1);
+				int couponId = resultSet.getInt(2);
+
+				purchases.add(new CustomerVsCoupon(customerId, couponId));
+			}
+
+		} catch (Exception e) {
+			e.getMessage();
+		} finally {
+			ConnectionPool.getInstance().returnConnection(connection);
+		}
+		System.out.printf("%10s %10s", "customerId", "couponId");
+		System.out.println();
+		MyUtils.separatorLine();
+		for (int i = 0; i < purchases.size(); i++) {
+			System.out.printf("%10s %10s", (purchases.get(i)).getCustomerId(), (purchases.get(i)).getCouponId());
+			System.out.println();
+
+		}
+		System.out.println();
 	}
 }

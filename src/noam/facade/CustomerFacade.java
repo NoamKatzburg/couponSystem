@@ -1,48 +1,104 @@
 package noam.facade;
 
-import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import noam.beans.Category;
 import noam.beans.Coupon;
 import noam.beans.Customer;
-import noam.dbdao.CompaniesDBDAO;
 import noam.dbdao.CouponsDBDAO;
 import noam.dbdao.CustomersDBDAO;
+import noam.utils.MyUtils;
 
 public class CustomerFacade extends ClientFacade {
 
 	private int customerId;
 
+	public CustomerFacade(int customerId) {
+		this.customerId = customerId;
+	}
+
+	public CustomerFacade() {
+	}
+
+	public int getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(int customerId) {
+		this.customerId = customerId;
+	}
+
 	public boolean login(String email, String password) {
 		customersDAO = new CustomersDBDAO();
 		if (customersDAO.isCustomerExist(email, password)) {
+			setCustomerId(customersDAO.getCustomerIdByEmail(email));
+			System.out.println("customer id is now: " + customerId);
 			return true;
 		}
+
 		return false;
+	}
+
+	public void purchaseCoupon(Coupon coupon, int couponId) {
+		couponsDAO = new CouponsDBDAO();
+		if (couponsDAO.doesCouponPurchaseExist(customerId, couponId)) {
+			System.out.println("you have already purchased this coupon, coupon: " + couponsDAO.getOneCoupon(couponId));
+			return;
+		}
+		if (coupon.getAmount() < 1) {
+			System.out.println("This coupon is out of stock");
+			return;
+		}
+		if (MyUtils.fixDate(coupon.getEndDate()).before(new Date())) {
+			System.out.println("this coupon has expired, Coupon: " + couponsDAO.getOneCoupon(couponId));
+			return;
+		}
+		couponsDAO.addCouponPurchase(customerId, couponId);
+	}
+
+	public List<Coupon> getCustomerCoupons() {
+		couponsDAO = new CouponsDBDAO();
+		return couponsDAO.getCouponsByCustomerId(customerId);
+	}
+
+	public List<Coupon> getCustomerCouponsByCategory(Category category) {
+		couponsDAO = new CouponsDBDAO();
+		List<Coupon> coupons = getCustomerCoupons();
+		Iterator<Coupon> iter = coupons.iterator();
+
+		while (iter.hasNext()) {
+			Coupon coup = iter.next();
+
+			if (!coup.getCategory().equals(category)) {
+				iter.remove();
+			}
+		}
+		return coupons;
 
 	}
 
-	public void purchaseCoupon(Coupon coupon) {
+	public List<Coupon> getCustomerCouponsByPrice(double maxPrice) {
+		couponsDAO = new CouponsDBDAO();
+		List<Coupon> coupons = getCustomerCoupons();
 
-	}
+		Iterator<Coupon> iter = coupons.iterator();
 
-	public ArrayList<Coupon> getCustomerCoupons() {
-		return null;
-	}
+		while (iter.hasNext()) {
+			Coupon coup = iter.next();
 
-	public ArrayList<Coupon> getCustomerCoupons(Category category) {
-		return null;
-
-	}
-
-	public ArrayList<Coupon> getCustomerCoupons(double maxPrice) {
-		return null;
+			if (coup.getPrice() >= maxPrice) {
+				iter.remove();
+			}
+		}
+		return coupons;
 
 	}
 
 	public Customer getCustomerDetails() {
-		return null;
+		customersDAO = new CustomersDBDAO();
+		return customersDAO.getOneCustomer(customerId);
 
 	}
 

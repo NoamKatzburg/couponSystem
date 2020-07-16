@@ -1,8 +1,6 @@
 package noam;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -11,26 +9,22 @@ import noam.beans.Company;
 import noam.beans.Coupon;
 import noam.beans.Customer;
 import noam.dao.CategoriesDAO;
-import noam.dao.CompaniesDAO;
 import noam.db.Database;
 import noam.dbdao.CategoriesDBDAO;
-import noam.dbdao.CompaniesDBDAO;
-import noam.dbdao.CouponsDBDAO;
-import noam.dbdao.CustomersDBDAO;
-import noam.exceptions.CannotChangeNameException;
+import noam.exceptions.CannotChangeException;
+import noam.exceptions.EmailExistsException;
 import noam.exceptions.NoSuchCouponException;
 import noam.exceptions.OutOfStockException;
 import noam.facade.AdminFacade;
-import noam.facade.ClientFacade;
 import noam.facade.CompanyFacade;
 import noam.facade.CustomerFacade;
-import noam.facade.EmailExistsException;
 import noam.utils.MyUtils;
 
 public class Test {
 
-	public static void main(String[] args) throws ClassNotFoundException, SQLException, InterruptedException,
-			OutOfStockException, NoSuchCouponException, CannotChangeNameException, EmailExistsException {
+	@SuppressWarnings("deprecation")
+	public static void testAll() throws ClassNotFoundException, SQLException, InterruptedException,
+			OutOfStockException, NoSuchCouponException, CannotChangeException, EmailExistsException {
 
 		Class.forName("com.mysql.cj.jdbc.Driver");
 
@@ -38,58 +32,54 @@ public class Test {
 		CategoriesDAO categoriesDBDAO = new CategoriesDBDAO();
 		categoriesDBDAO.initCategoryTable();
 
-		CompaniesDAO companiesDBDAO = new CompaniesDBDAO();
-
 		Company com1 = new Company();
 		com1.setName("company1");
-		com1.setEmail("com@pany.com");
-		com1.setPassword("1234");
+		com1.setEmail("com@g.com");
+		com1.setPassword("com1");
 
 		Company com2 = new Company();
 		com2.setName("company2");
-		com2.setEmail("My@comp");
-		com2.setPassword("helooo");
+		com2.setEmail("com2@g.com");
+		com2.setPassword("com2");
 
 		Company com3 = new Company();
 		com3.setName("company3");
-		com3.setEmail("com@pany");
-		com3.setPassword("12354");
+		com3.setEmail("com3@g.com");
+		com3.setPassword("com3");
 
-		CustomersDBDAO customersDBDAO = new CustomersDBDAO();
 
 		Customer cust1 = new Customer();
-		cust1.setFirstName("noam");
-		cust1.setLastName("katz");
-		cust1.setEmail("katz@katz");
+		cust1.setFirstName("customer1");
+		cust1.setLastName("customer");
+		cust1.setEmail("cust1@g.com");
 		cust1.setPassword("1234");
 
 		Customer cust2 = new Customer();
-		cust2.setFirstName("kobi");
-		cust2.setLastName("shasha");
-		cust2.setEmail("noakobim@katz");
+		cust2.setFirstName("customer2");
+		cust2.setLastName("customer");
+		cust2.setEmail("cust2@g.com");
 		cust2.setPassword("1234");
 
 		Customer cust3 = new Customer();
-		cust3.setFirstName("benny");
-		cust3.setLastName("katz");
-		cust3.setEmail("noam@katz");
+		cust3.setFirstName("customer3");
+		cust3.setLastName("customer");
+		cust3.setEmail("cust3@g.com");
 		cust3.setPassword("1234");
 
 		Customer cust4 = new Customer();
-		cust4.setFirstName("hallel");
-		cust4.setLastName("katz");
-		cust4.setEmail("hallel@katz");
+		cust4.setFirstName("customer4");
+		cust4.setLastName("customer");
+		cust4.setEmail("cust4@g.com");
 		cust4.setPassword("1234");
 
-		CouponsDBDAO cuDbdao = new CouponsDBDAO();
 
 		Coupon coupon1 = new Coupon();
 		coupon1.setCompanyID(1);
 		coupon1.setCategory(Category.Electricty);
 		coupon1.setTitle("new");
 		coupon1.setDescription("bolts and more");
-		coupon1.setStartDate(new Date(2020, 9, 3));
-		coupon1.setEndDate(new Date(2020, 9, 17));
+		coupon1.setStartDate(new Date(2021, 9, 3));
+		coupon1.setEndDate(new Date(2021, 9, 17));
 		coupon1.setAmount(21);
 		coupon1.setPrice(22.2);
 		coupon1.setImage("img");
@@ -99,8 +89,8 @@ public class Test {
 		coupon2.setCategory(Category.Food);
 		coupon2.setTitle("1+1");
 		coupon2.setDescription("eat more");
-		coupon2.setStartDate(new Date(2020, 9, 17));
-		coupon2.setEndDate(new Date(2020, 9, 17));
+		coupon2.setStartDate(new Date(2021, 9, 17));
+		coupon2.setEndDate(new Date(2021, 9, 17));
 		coupon2.setAmount(100);
 		coupon2.setPrice(51.5);
 		coupon2.setImage("img");
@@ -110,12 +100,12 @@ public class Test {
 		coupon3.setCategory(Category.Restaurant);
 		coupon3.setTitle("come to us");
 		coupon3.setDescription("free meal");
-		coupon3.setStartDate(new Date(2020, 9, 17));
-		coupon3.setEndDate(new Date(2020, 9, 17));
+		coupon3.setStartDate(new Date(2019, 9, 17));
+		coupon3.setEndDate(new Date(2019, 9, 17));
 		coupon3.setAmount(33);
 		coupon3.setPrice(221.5);
 		coupon3.setImage("img");
-		
+
 		Coupon coupon4 = new Coupon();
 		coupon4.setCompanyID(1);
 		coupon4.setCategory(Category.Restaurant);
@@ -145,7 +135,7 @@ public class Test {
 		MyUtils.printCompaniesTable(companies);
 
 		MyUtils.printTestLine("Testing update company");
-		com1.setEmail("company@com");
+		com1.setEmail("com1@g.com");
 		aFacade.updateCompany(com1, 1);
 		companies = aFacade.getAllCompanies();
 		MyUtils.printCompaniesTable(companies);
@@ -190,154 +180,93 @@ public class Test {
 //		customers = aFacade.getAllCustomers();
 //		MyUtils.printCustomersTable(customers);
 
-		CompanyFacade cFacade = new CompanyFacade();
+		////////////////////////////////////////////////////////////////////////////////////////
+		CompanyFacade companyFacade = new CompanyFacade();
 		MyUtils.classSeparator("Company");
 
 		MyUtils.printTestLine("Testing Company Login");
-		System.out.println("if works should return true: " + cFacade.login("My@comp", "helooo"));
+		System.out.println("if works should return true: " + companyFacade.login("com1@g.com", "com1")); // company 1
 
 		MyUtils.printTestLine("Testing add coupon");
-		cFacade.addCoupon(coupon1);
-		cFacade.addCoupon(coupon2);
-		cFacade.addCoupon(coupon3);
-		cFacade.addCoupon(coupon4);
-		List<Coupon> coupons = aFacade.getAllCoupons(); 
+		companyFacade.addCoupon(coupon1);
+		companyFacade.login("com2@g.com", "com2"); // company 2
+		companyFacade.addCoupon(coupon2);
+		companyFacade.login("com3@g.com", "com3"); // company 3
+		companyFacade.addCoupon(coupon3);
+		companyFacade.login("com1@g.com", "com1");
+		companyFacade.addCoupon(coupon4);
+		List<Coupon> coupons = aFacade.getAllCoupons();
 		MyUtils.printCouponsTable(coupons);
 
 		MyUtils.printTestLine("Testing update coupon");
 		coupon2.setAmount(500);
-		cFacade.updateCoupon(coupon2, 2);
-		coupons = aFacade.getAllCoupons(); 
+		companyFacade.login("com2@g.com", "com2");
+		companyFacade.updateCoupon(coupon2, 2);
+		coupons = aFacade.getAllCoupons();
 		MyUtils.printCouponsTable(coupons);
-		
-		
-		MyUtils.printTestLine("Testing get company coupons by id");
-		coupons = cFacade.getCompanyCouponsById(1);
+
+		MyUtils.printTestLine("Testing get company coupons");
+		companyFacade.login("com1@g.com", "com1");
+		coupons = companyFacade.getCompanyCoupons();
 		MyUtils.printCouponsTable(coupons);
-		
-		MyUtils.printTestLine("get  Company Coupons By Category (Restaurant)"); 
-		coupons = cFacade.getCompanyCouponsByCategory(Category.Restaurant, 1);
+
+		MyUtils.printTestLine("get  Company Coupons By Category (Restaurant)");
+		coupons = companyFacade.getCompanyCouponsByCategory(Category.Restaurant);
 		MyUtils.printCouponsTable(coupons);
-		
-		
-		MyUtils.printTestLine("testing get company coupons by price (less or equal to 50)"); 
-		coupons = cFacade.getCompanyCouponsByPrice(50.0, 1);
+
+		MyUtils.printTestLine("testing get company coupons by price (less or equal to 50)");
+		coupons = companyFacade.getCompanyCouponsByPrice(50.0);
 		MyUtils.printCouponsTable(coupons);
-		
-		
+
 		MyUtils.printTestLine("Getting company details");
-		System.out.println(cFacade.getCompanyDetails(3));
+		System.out.println(companyFacade.getCompanyDetails());
+
 		
-		//checked and works
+		// checked and works
 //		MyUtils.printTestLine("Testing delete coupon");
-//		cFacade.deleteCoupon(1);
+//		companyFacade.deleteCoupon(1);
 //		coupons = aFacade.getAllCoupons();
 //		MyUtils.printCouponsTable(coupons);
+
+////////////////////////////////////////////////////////////////////////////////////////
 		
-		CustomerFacade custFacade = new CustomerFacade();
+		CustomerFacade customerFacade = new CustomerFacade();
+
 		MyUtils.classSeparator("Customer");
-		
+
 		MyUtils.printTestLine("Testing Customer login");
-		System.out.println("If it works will return true: " + custFacade.login("noakobim@katz", "1234"));
+		System.out.println("If it works will return true: " + customerFacade.login("cust1@g.com", "987654"));
 
+		MyUtils.printTestLine("testing Purchase coupon");
+		customerFacade.purchaseCoupon(coupon1, 1);
+		customerFacade.login("cust2@g.com", "1234");
+		customerFacade.purchaseCoupon(coupon2, 2);
+		customerFacade.purchaseCoupon(coupon2, 2); // tried to buy twice
+		customerFacade.login("cust3@g.com", "1234");
+		customerFacade.purchaseCoupon(coupon3, 3); // is expired
+		customerFacade.purchaseCoupon(coupon4, 4);
+		customerFacade.purchaseCoupon(coupon1, 1);
+		customerFacade.login("cust4@g.com", "1234");
+		customerFacade.purchaseCoupon(coupon4, 4);
+		System.out.println();
+		MyUtils.printCouponsVsCustomersTable();
+		coupons = aFacade.getAllCoupons();
+		MyUtils.printCouponsTable(coupons);
+
+		MyUtils.printTestLine("testing get customer coupons (customer 3)");
+		customerFacade.login("cust3@g.com", "1234");
+		MyUtils.printCouponsTable(customerFacade.getCustomerCoupons());
 		
+		MyUtils.printTestLine("Testing get Customer Coupons By Category");
+		coupons = customerFacade.getCustomerCouponsByCategory(Category.Restaurant);
+		MyUtils.printCouponsTable(coupons);
 		
+		MyUtils.printTestLine("Testing get Customer Coupons By price");
+		coupons = customerFacade.getCustomerCouponsByPrice(50.0);
+		MyUtils.printCouponsTable(coupons);
 		
-	}
-
-	public static void testCompanyClass(CompaniesDBDAO cDbdao, Company c1, Company c2, Company c3)
-			throws SQLException, CannotChangeNameException {
-		// Checking add company
-		cDbdao.addCompany(c1);
-		cDbdao.addCompany(c2);
-		cDbdao.addCompany(c3);
-
-		// Checking update company
-
-		c1.setName("comp2");
-
-		cDbdao.updateCompany(c1, 1);
-
-		// checking is company exist
-		System.out.println("if this works, should return true: " + cDbdao.isCompanyExist("com@pany", "12354"));
-
-		// checking delete company
-		// cDbdao.deleteCompany(2);
-
-		// checking getAllCompanies
-		System.out.println(cDbdao.getAllCompanies());
-
-		// checking getonecompany
-		System.out.println(cDbdao.getOneCompany(3));
-
-		System.out.println("finished checking Copmanies \n *******************************************");
-	}
-
-	public static void testCouponsClass(CouponsDBDAO cuDbdao, Coupon cu1, Coupon cu2, Coupon cu3)
-			throws OutOfStockException, NoSuchCouponException {
-
-		// Checking add coupon
-		cuDbdao.addCoupon(cu1);
-		cuDbdao.addCoupon(cu2);
-		cuDbdao.addCoupon(cu3);
-
-		// checking update coupon
-		cu1.setAmount(3000);
-		cuDbdao.updateCoupon(cu1, 1);
-
-		// checking delete coupon
-		// cuDbdao.deleteCoupon(2);
-
-		// checking getAllCoupons
-		System.out.println(cuDbdao.getAllCoupons());
-
-		// checking get one coupon
-		System.out.println("onr coupon " + cuDbdao.getOneCoupon(3));
-
-		/*
-		 * check coupon purchase can only do after i add customers
-		 */
-		cuDbdao.addCouponPurchase(1, 3);
-
-		/*
-		 * check delete coupon purchase can only do after i add customers
-		 */
-		// cuDbdao.deleteCouponPurchase(1, 3);
-
-		// checking does coupon exist
-
-		System.out.println("if works should return true: " + cuDbdao.doesCouponExist(3));
-
-		System.out.println("finished checking Coupons \n *******************************************");
-
-	}
-
-	public static void testCustomerClass(CustomersDBDAO cDbdao, Customer c1, Customer c2, Customer c3, Customer c4) {
-
-		// checking add customers
-		cDbdao.addCustomer(c1);
-		cDbdao.addCustomer(c2);
-		cDbdao.addCustomer(c3);
-		cDbdao.addCustomer(c4);
-
-		// checking is customer exist
-
-		System.out.println("if this works should br true: " + cDbdao.isCustomerExist("noam@katz", "1234"));
-
-		// checking update customer
-		c3.setPassword("111111");
-		cDbdao.updateCustomer(c3, 3);
-
-		// checking delete customer
-		// cDbdao.deleteCustomer(2);
-
-		// checking get all customers
-		System.out.println(cDbdao.getAllCustomers());
-
-		// checking one customer
-		System.out.println(cDbdao.getOneCustomer(3));
-
-		System.out.println("finished checking customers \n *******************************************");
+		MyUtils.printTestLine("Testing get Customer details");
+		System.out.println(customerFacade.getCustomerDetails());
 	}
 
 }

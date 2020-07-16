@@ -15,13 +15,19 @@ import noam.db.ConnectionPool;
 public class CustomersDBDAO implements CustomersDAO {
 
 	private Connection connection;
+	private String IS_CUST_EXIST = "SELECT * FROM `coupon_system`.`customers` WHERE  `email`= ? AND `password`=?";
+	private String GET_CUST_ID_BY_EMAIL = "SELECT * FROM `coupon_system`.`customers` WHERE `email`= ?;";
+	private String ADD_CUST = "INSERT INTO `coupon_system`.`customers` (`first_name`, `last_name`, `email`, `password`) VALUES (?, ?, ?, ?);\r\n";
+	private String UPDATE_CUST = "UPDATE `coupon_system`.`customers` SET `first_name` = ?, `last_name` = ?, `email` = ?, `password` = ? WHERE (`id` = ?);";
+	private String DELETE_CUST = "DELETE FROM `coupon_system`.`customers` WHERE (`id` = ?);";
+	private String GET_ALL_CUST = "SELECT * FROM `coupon_system`.`customers`;";
+	private String GET_ONE_CUST ="SELECT * FROM `coupon_system`.`customers` WHERE (`id`= ?);";
+	private String GET_ONE_CUST_BY_EMAIL ="SELECT * FROM `coupon_system`.`customers` WHERE (`email`= ?);";
 
 	public boolean isCustomerExist(String email, String password) {
-		connection = null;
-
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
-			String sql = "SELECT * FROM `coupon_system`.`customers` WHERE  `email`= ? AND `password`=?";
+			String sql = IS_CUST_EXIST;
 
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setString(1, email);
@@ -37,19 +43,46 @@ public class CustomersDBDAO implements CustomersDAO {
 			e.getMessage();
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
 		}
 
 		return false;
 
 	}
 
-	public void addCustomer(Customer customer) {
+	public int getCustomerIdByEmail(String email) {
+		int id = 0;
 		connection = null;
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
-			String sql = "INSERT INTO `coupon_system`.`customers` (`first_name`, `last_name`, `email`, `password`) VALUES (?, ?, ?, ?);\r\n"
-					+ "";
+			String sql = GET_CUST_ID_BY_EMAIL;
+
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setString(1, email);
+			ResultSet resultSet = statement.executeQuery();
+
+			while (resultSet.next()) {
+				id = resultSet.getInt(1);
+//				String first = resultSet.getString(2);
+//				String last = resultSet.getString(3);
+//				String custEmail = resultSet.getString(4);
+//				String password = resultSet.getString(5);
+			}
+
+		} catch (Exception e) {
+			e.getMessage();
+		} finally {
+			ConnectionPool.getInstance().returnConnection(connection);
+		}
+		return id;
+	}
+
+	public void addCustomer(Customer customer) {
+		try {
+			connection = ConnectionPool.getInstance().getConnection();
+
+			String sql = ADD_CUST;
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setString(1, customer.getFirstName());
 			statement.setString(2, customer.getLastName());
@@ -60,16 +93,16 @@ public class CustomersDBDAO implements CustomersDAO {
 			e.getMessage();
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
 		}
 
 	}
 
 	public void updateCustomer(Customer customer, int id) {
-		connection = null;
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
-			String sql = "UPDATE `coupon_system`.`customers` SET `first_name` = ?, `last_name` = ?, `email` = ?, `password` = ? WHERE (`id` = ?);";
+			String sql = UPDATE_CUST;
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setString(1, customer.getFirstName());
 			statement.setString(2, customer.getLastName());
@@ -81,16 +114,17 @@ public class CustomersDBDAO implements CustomersDAO {
 			e.getMessage();
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
 		}
 
 	}
 
 	public void deleteCustomer(int customerID) {
-		connection = null;
+
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
-			String sql = "DELETE FROM `coupon_system`.`customers` WHERE (`id` = ?);";
+			String sql =DELETE_CUST ;
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setInt(1, customerID);
 
@@ -99,6 +133,7 @@ public class CustomersDBDAO implements CustomersDAO {
 			e.getMessage();
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
 		}
 
 	}
@@ -106,11 +141,10 @@ public class CustomersDBDAO implements CustomersDAO {
 	public List<Customer> getAllCustomers() {
 		List<Customer> customers = new ArrayList<Customer>();
 
-		connection = null;
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
-			String sql = "SELECT * FROM `coupon_system`.`customers`;";
+			String sql = GET_ALL_CUST;
 
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(sql);
@@ -129,17 +163,18 @@ public class CustomersDBDAO implements CustomersDAO {
 			e.getMessage();
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
 		}
-		return  customers;
+		return customers;
 	}
 
 	public Customer getOneCustomer(int customerID) {
 		Customer c1 = null;
-		connection = null;
+
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
-			String sql = "SELECT * FROM `coupon_system`.`customers` WHERE (`id`= ?);";
+			String sql = GET_ONE_CUST;
 
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setInt(1, customerID);
@@ -159,18 +194,19 @@ public class CustomersDBDAO implements CustomersDAO {
 			e.getMessage();
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
 		}
 		return c1;
 
 	}
-	
+
 	public Customer getOneCustomerByEmail(String custEmail) {
 		Customer c1 = null;
-		connection = null;
+
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
-			String sql = "SELECT * FROM `coupon_system`.`customers` WHERE (`email`= ?);";
+			String sql = GET_ONE_CUST_BY_EMAIL;
 
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setString(1, custEmail);
@@ -190,6 +226,7 @@ public class CustomersDBDAO implements CustomersDAO {
 			e.getMessage();
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
 		}
 		return c1;
 

@@ -1,7 +1,6 @@
 package noam.facade;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,9 +15,27 @@ public class CompanyFacade extends ClientFacade {
 
 	private int companyId;
 
+	public CompanyFacade(int companyId) {
+		this.companyId = companyId;
+	}
+
+	public CompanyFacade() {
+
+	}
+
+	public int getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(int companyId) {
+		this.companyId = companyId;
+	}
+
 	public boolean login(String email, String password) throws SQLException {
 		companiesDAO = new CompaniesDBDAO();
 		if (companiesDAO.isCompanyExist(email, password)) {
+			setCompanyId(companiesDAO.getCompanyIdByEmail(email));
+			System.out.println("company id is now: " + companyId);
 			return true;
 		}
 		return false;
@@ -47,7 +64,7 @@ public class CompanyFacade extends ClientFacade {
 		couponsDAO.deleteCoupon(couponId);
 	}
 
-	public List<Coupon> getCompanyCouponsById(int companyId) {
+	public List<Coupon> getCompanyCoupons() {
 		couponsDAO = new CouponsDBDAO();
 		List<Coupon> coupons = couponsDAO.getAllCoupons();
 		Iterator<Coupon> iter = coupons.iterator();
@@ -55,62 +72,47 @@ public class CompanyFacade extends ClientFacade {
 		while (iter.hasNext()) {
 			Coupon coup = iter.next();
 
-		    if (coup.getCompanyID() != companyId) {
-		        iter.remove();
-		    }
+			if (coup.getCompanyID() != companyId) {
+				iter.remove();
+			}
 		}
-//		for (Coupon coupon : coupons) {
-//			if (coupon.getCompanyID() != companyId) {
-//				coupons.remove(coupon);
-//			}
-//		}
 		return coupons;
 	}
 
-	public List<Coupon> getCompanyCouponsByCategory(Category category, int companyId) {
+	public List<Coupon> getCompanyCouponsByCategory(Category category) {
 		couponsDAO = new CouponsDBDAO();
-		List<Coupon> coupons = getCompanyCouponsById(companyId);
+		List<Coupon> coupons = getCompanyCoupons();
 		Iterator<Coupon> iter = coupons.iterator();
 
 		while (iter.hasNext()) {
 			Coupon coup = iter.next();
 
-		    if (!coup.getCategory().equals(category)) {
-		        iter.remove();
-		    }
+			if (!coup.getCategory().equals(category)) {
+				iter.remove();
+			}
 		}
-//		for (Coupon coupon : coupons) {
-//			if (coupon.getCompanyID() != companyId && coupon.getCategory() != category) {
-//				coupons.remove(coupon);
-//			}
-//		}
 		return coupons;
 
 	}
 
-	public List<Coupon> getCompanyCouponsByPrice(double maxPrice, int companyId) {
+	public List<Coupon> getCompanyCouponsByPrice(double maxPrice) {
 		couponsDAO = new CouponsDBDAO();
-		List<Coupon> coupons = getCompanyCouponsById(companyId);
-		
+		List<Coupon> coupons = getCompanyCoupons();
+
 		Iterator<Coupon> iter = coupons.iterator();
 
 		while (iter.hasNext()) {
 			Coupon coup = iter.next();
 
-		    if (coup.getPrice() >= maxPrice) {
-		        iter.remove();
-		    }
+			if (coup.getPrice() >= maxPrice) {
+				iter.remove();
+			}
 		}
-//		for (Coupon coupon : coupons) {
-//			if (coupon.getCompanyID() != companyId && coupon.getPrice() <= maxPrice) {
-//				coupons.remove(coupon);
-//			}
-//		}
 		return coupons;
 
 	}
 
-	public Company getCompanyDetails(int companyId) {
+	public Company getCompanyDetails() {
 		companiesDAO = new CompaniesDBDAO();
 		return companiesDAO.getOneCompany(companyId);
 

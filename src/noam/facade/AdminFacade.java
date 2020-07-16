@@ -9,9 +9,16 @@ import noam.beans.Customer;
 import noam.dbdao.CompaniesDBDAO;
 import noam.dbdao.CouponsDBDAO;
 import noam.dbdao.CustomersDBDAO;
+import noam.exceptions.EmailExistsException;
 import noam.exceptions.NoSuchCouponException;
 
 public class AdminFacade extends ClientFacade {
+	
+	
+
+	public AdminFacade() {
+		
+	}
 
 	public boolean login(String email, String password) {
 		if (email == "admin@admin.com" && password == "admin") {

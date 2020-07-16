@@ -4,10 +4,11 @@ import java.util.List;
 
 import noam.beans.Customer;
 
-
 public interface CustomersDAO {
-	
+
 	boolean isCustomerExist(String email, String password);
+
+	int getCustomerIdByEmail(String email);
 
 	void addCustomer(Customer customer);
 
@@ -18,7 +19,7 @@ public interface CustomersDAO {
 	List<Customer> getAllCustomers();
 
 	Customer getOneCustomer(int customerID);
-	
-	Customer getOneCustomerByEmail(String email);
+
+	//Customer getOneCustomerByEmail(String email); NOT IN USE
 
 }

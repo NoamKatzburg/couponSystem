@@ -1,4 +1,4 @@
-package noam.lm;
+package noam.login;
 
 public enum ClientType {
 	ADMINISTRATOR, 

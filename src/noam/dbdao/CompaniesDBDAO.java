@@ -15,19 +15,25 @@ import noam.db.ConnectionPool;
 public class CompaniesDBDAO implements CompaniesDAO {
 
 	private Connection connection;
-
+	private final String IS_COM_EXIST = "SELECT * FROM `coupon_system`.`companies` WHERE  `email`= ? AND `password`= ? ;";
+	private final String GET_COM_ID_BY_EMAIL = "SELECT * FROM `coupon_system`.`companies` WHERE  `email`= ?;";
+	private final String ADD_COM = "INSERT INTO `coupon_system`.`companies` (`name`, `email`, `password`) VALUES (?, ?, ?);\r\n";
+	private final String UPDATE_COM = "UPDATE `coupon_system`.`companies` SET `email` = ?, `password` = ? WHERE (`id` = ?);\r\n";
+	private final String DELETE_COM = "DELETE FROM `coupon_system`.`companies` WHERE (`id` = ?);";
+	private final String GET_ALL_COM = "SELECT * FROM `coupon_system`.`companies`;";
+	private final String GET_ONE_COM_BY_ID = "SELECT * FROM `COUPON_SYSTEM`.`COMPANIES` WHERE `id`=?;";
+	
+	
 	public boolean isCompanyExist(String email, String password) throws SQLException {
-		connection = null;
-
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
-			String sql = "SELECT * FROM `coupon_system`.`companies` WHERE  `email`= ? AND `password`= ? ;";
+			String sql = IS_COM_EXIST ;
 
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setString(1, email);
 			statement.setString(2, password);
 			ResultSet resultSet = statement.executeQuery();
-
+			
 			if (resultSet.next()) {
 				return true;
 			}
@@ -37,17 +43,43 @@ public class CompaniesDBDAO implements CompaniesDAO {
 			e.getMessage();
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
 		}
-
 		return false;
 	}
 
-	public void addCompany(Company company) {
-		connection = null;
+	public int getCompanyIdByEmail(String email) {
+		int id = 0;
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
-			String sql = "INSERT INTO `coupon_system`.`companies` (`name`, `email`, `password`) VALUES (?, ?, ?);\r\n";
+			String sql = GET_COM_ID_BY_EMAIL ;
+
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setString(1, email);
+			ResultSet resultSet = statement.executeQuery();
+
+			while (resultSet.next()) {
+				id = resultSet.getInt(1);
+//				String name = resultSet.getString(2);
+//				String comEmail = resultSet.getString(3);
+//				String password = resultSet.getString(4);
+			}
+
+		} catch (Exception e) {
+			e.getMessage();
+		} finally {
+			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
+		}
+		return id;
+	}
+
+	public void addCompany(Company company) {
+		try {
+			connection = ConnectionPool.getInstance().getConnection();
+
+			String sql = ADD_COM;
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setString(1, company.getName());
 			statement.setString(2, company.getEmail());
@@ -57,17 +89,15 @@ public class CompaniesDBDAO implements CompaniesDAO {
 			e.getMessage();
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
 		}
-
 	}
 
 	public void updateCompany(Company company, int companyId) {
-
-		connection = null;
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
-			String sql = "UPDATE `coupon_system`.`companies` SET `email` = ?, `password` = ? WHERE (`id` = ?);\r\n";
+			String sql = UPDATE_COM;
 
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setString(1, company.getEmail());
@@ -78,16 +108,16 @@ public class CompaniesDBDAO implements CompaniesDAO {
 			e.getMessage();
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
 		}
 
 	}
 
 	public void deleteCompany(int companyID) {
-		connection = null;
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
-			String sql = "DELETE FROM `coupon_system`.`companies` WHERE (`id` = ?);";
+			String sql = DELETE_COM;
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setInt(1, companyID);
 
@@ -96,18 +126,17 @@ public class CompaniesDBDAO implements CompaniesDAO {
 			e.getMessage();
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
 		}
 
 	}
 
-	public ArrayList<Company> getAllCompanies() {
+	public List<Company> getAllCompanies() {
 		List<Company> companies = new ArrayList<Company>();
-
-		connection = null;
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
-			String sql = "SELECT * FROM `coupon_system`.`companies`;";
+			String sql = GET_ALL_COM;
 
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(sql);
@@ -120,23 +149,20 @@ public class CompaniesDBDAO implements CompaniesDAO {
 
 				companies.add(new Company(id, name, email, password));
 			}
-
 		} catch (Exception e) {
 			e.getMessage();
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
 		}
-		return (ArrayList<Company>) companies;
+		return  companies;
 	}
 
 	public Company getOneCompany(int companyID) {
 		Company c1 = null;
-
-		connection = null;
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
-
-			String sql = "SELECT * FROM `COUPON_SYSTEM`.`COMPANIES` WHERE `id`=?;";
+			String sql = GET_ONE_COM_BY_ID;
 
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setInt(1, companyID);
@@ -150,42 +176,11 @@ public class CompaniesDBDAO implements CompaniesDAO {
 
 				c1 = new Company(id, name, email, password);
 			}
-
 		} catch (Exception e) {
 			e.getMessage();
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
-		}
-		return c1;
-	}
-
-	public Company getOneCompany(String companyName, String companyEmail) {
-		Company c1 = null;
-
-		connection = null;
-		try {
-			connection = ConnectionPool.getInstance().getConnection();
-
-			String sql = "SELECT * FROM `COUPON_SYSTEM`.`COMPANIES` WHERE `name`= ? or `email`= ?;";
-
-			PreparedStatement statement = connection.prepareStatement(sql);
-			statement.setString(1, companyName);
-			statement.setString(2, companyEmail);
-			ResultSet resultSet = statement.executeQuery();
-
-			while (resultSet.next()) {
-				int id = resultSet.getInt(1);
-				String name = resultSet.getString(2);
-				String email = resultSet.getString(3);
-				String password = resultSet.getString(4);
-
-				c1 = new Company(id, name, email, password);
-			}
-
-		} catch (Exception e) {
-			e.getMessage();
-		} finally {
-			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
 		}
 		return c1;
 	}

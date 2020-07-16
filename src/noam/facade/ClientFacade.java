@@ -14,6 +14,16 @@ public abstract class ClientFacade {
 	
 	protected CouponsDAO couponsDAO;
 	
+	
+	
+//	public ClientFacade(CompaniesDAO companiesDAO, CustomersDAO customersDAO, CouponsDAO couponsDAO) {
+////		this.companiesDAO = new CompaniesDBDAO();
+////		this.customersDAO = new CustomersDBDAO();
+////		this.couponsDAO = new CouponsDBDAO();
+//	}
+
+
+
 	public abstract boolean login(String email, String password)  throws SQLException;
 
 }

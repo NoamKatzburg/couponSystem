@@ -1,4 +1,4 @@
-package noam.facade;
+package noam.exceptions;
 
 public class EmailExistsException extends Exception {
 

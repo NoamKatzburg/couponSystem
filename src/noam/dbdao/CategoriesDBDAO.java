@@ -10,14 +10,15 @@ import noam.db.ConnectionPool;
 public class CategoriesDBDAO implements CategoriesDAO {
 
 	private Connection connection;
+	private String INSERT_FOOD_CATEGORY = "INSERT INTO `coupon_system`.`categories` (`name`) VALUES ('Food');";
+	private String INSERT_ELEC_CATEGORY = "INSERT INTO `coupon_system`.`categories` (`name`) VALUES ('Electricty');";
+	private String INSERT_REST_CATEGORY = "INSERT INTO `coupon_system`.`categories` (`name`) VALUES ('Restaurant');";
+	private String INSERT_VACA_CATEGORY = "INSERT INTO `coupon_system`.`categories` (`name`) VALUES ('Vacation');";
 
 	public void initCategoryTable() {
-
-		connection = null;
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
-
-			String sql = "INSERT INTO `coupon_system`.`categories` (`name`) VALUES ('Food');";
+			String sql = INSERT_FOOD_CATEGORY;
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.executeUpdate();
 		} catch (Exception e) {
@@ -30,7 +31,21 @@ public class CategoriesDBDAO implements CategoriesDAO {
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
-			String sql = "INSERT INTO `coupon_system`.`categories` (`name`) VALUES ('Electricty');";
+			String sql = INSERT_ELEC_CATEGORY;
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.executeUpdate();
+		} catch (Exception e) {
+			e.getMessage();
+		} finally {
+			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
+		}
+
+		connection = null;
+		try {
+			connection = ConnectionPool.getInstance().getConnection();
+
+			String sql = INSERT_REST_CATEGORY;
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.executeUpdate();
 		} catch (Exception e) {
@@ -43,20 +58,7 @@ public class CategoriesDBDAO implements CategoriesDAO {
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
-			String sql = "INSERT INTO `coupon_system`.`categories` (`name`) VALUES ('Restaurant');";
-			PreparedStatement statement = connection.prepareStatement(sql);
-			statement.executeUpdate();
-		} catch (Exception e) {
-			e.getMessage();
-		} finally {
-			ConnectionPool.getInstance().returnConnection(connection);
-		}
-
-		connection = null;
-		try {
-			connection = ConnectionPool.getInstance().getConnection();
-
-			String sql = "INSERT INTO `coupon_system`.`categories` (`name`) VALUES ('Vacation');";
+			String sql = INSERT_VACA_CATEGORY;
 			PreparedStatement statement = connection.prepareStatement(sql);
 			statement.executeUpdate();
 		} catch (Exception e) {
