@@ -8,18 +8,15 @@ import noam.beans.Category;
 import noam.beans.Coupon;
 import noam.beans.Customer;
 import noam.dbdao.CouponsDBDAO;
-import noam.dbdao.CustomersDBDAO;
+import noam.exceptions.OutOfStockException;
 import noam.utils.MyUtils;
 
 public class CustomerFacade extends ClientFacade {
 
 	private int customerId;
 
-	public CustomerFacade(int customerId) {
-		this.customerId = customerId;
-	}
-
 	public CustomerFacade() {
+		super();
 	}
 
 	public int getCustomerId() {
@@ -31,7 +28,6 @@ public class CustomerFacade extends ClientFacade {
 	}
 
 	public boolean login(String email, String password) {
-		customersDAO = new CustomersDBDAO();
 		if (customersDAO.isCustomerExist(email, password)) {
 			setCustomerId(customersDAO.getCustomerIdByEmail(email));
 			System.out.println("customer id is now: " + customerId);
@@ -41,8 +37,7 @@ public class CustomerFacade extends ClientFacade {
 		return false;
 	}
 
-	public void purchaseCoupon(Coupon coupon, int couponId) {
-		couponsDAO = new CouponsDBDAO();
+	public void purchaseCoupon(Coupon coupon, int couponId) throws OutOfStockException {
 		if (couponsDAO.doesCouponPurchaseExist(customerId, couponId)) {
 			System.out.println("you have already purchased this coupon, coupon: " + couponsDAO.getOneCoupon(couponId));
 			return;
@@ -59,12 +54,10 @@ public class CustomerFacade extends ClientFacade {
 	}
 
 	public List<Coupon> getCustomerCoupons() {
-		couponsDAO = new CouponsDBDAO();
 		return couponsDAO.getCouponsByCustomerId(customerId);
 	}
 
 	public List<Coupon> getCustomerCouponsByCategory(Category category) {
-		couponsDAO = new CouponsDBDAO();
 		List<Coupon> coupons = getCustomerCoupons();
 		Iterator<Coupon> iter = coupons.iterator();
 
@@ -76,11 +69,9 @@ public class CustomerFacade extends ClientFacade {
 			}
 		}
 		return coupons;
-
 	}
 
 	public List<Coupon> getCustomerCouponsByPrice(double maxPrice) {
-		couponsDAO = new CouponsDBDAO();
 		List<Coupon> coupons = getCustomerCoupons();
 
 		Iterator<Coupon> iter = coupons.iterator();
@@ -93,12 +84,12 @@ public class CustomerFacade extends ClientFacade {
 			}
 		}
 		return coupons;
-
 	}
 
 	public Customer getCustomerDetails() {
-		customersDAO = new CustomersDBDAO();
-		return customersDAO.getOneCustomer(customerId);
+		Customer c = customersDAO.getOneCustomer(customerId);
+		c.setCoupons(getCustomerCoupons());
+		return c;
 
 	}
 

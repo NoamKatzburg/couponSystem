@@ -7,20 +7,14 @@ import java.util.List;
 import noam.beans.Category;
 import noam.beans.Company;
 import noam.beans.Coupon;
-import noam.dbdao.CompaniesDBDAO;
-import noam.dbdao.CouponsDBDAO;
 import noam.exceptions.NoSuchCouponException;
 
 public class CompanyFacade extends ClientFacade {
 
 	private int companyId;
 
-	public CompanyFacade(int companyId) {
-		this.companyId = companyId;
-	}
-
 	public CompanyFacade() {
-
+		super();
 	}
 
 	public int getCompanyId() {
@@ -32,7 +26,6 @@ public class CompanyFacade extends ClientFacade {
 	}
 
 	public boolean login(String email, String password) throws SQLException {
-		companiesDAO = new CompaniesDBDAO();
 		if (companiesDAO.isCompanyExist(email, password)) {
 			setCompanyId(companiesDAO.getCompanyIdByEmail(email));
 			System.out.println("company id is now: " + companyId);
@@ -42,7 +35,7 @@ public class CompanyFacade extends ClientFacade {
 	}
 
 	public void addCoupon(Coupon coupon) {
-		couponsDAO = new CouponsDBDAO();
+//		couponsDAO = new CouponsDBDAO();
 		List<Coupon> coupons = couponsDAO.getAllCoupons();
 		for (Coupon coup : coupons) {
 			if (coup.getCompanyID() == coupon.getCompanyID() && coup.getTitle() == coupon.getTitle()) {
@@ -54,18 +47,16 @@ public class CompanyFacade extends ClientFacade {
 	}
 
 	public void updateCoupon(Coupon coupon, int id) {
-		couponsDAO = new CouponsDBDAO();
+//		couponsDAO = new CouponsDBDAO();
 		couponsDAO.updateCoupon(coupon, id);
 	}
 
 	public void deleteCoupon(int couponId) throws NoSuchCouponException {
-		couponsDAO = new CouponsDBDAO();
 		couponsDAO.deleteCouponPurchaseById(couponId);
 		couponsDAO.deleteCoupon(couponId);
 	}
 
 	public List<Coupon> getCompanyCoupons() {
-		couponsDAO = new CouponsDBDAO();
 		List<Coupon> coupons = couponsDAO.getAllCoupons();
 		Iterator<Coupon> iter = coupons.iterator();
 
@@ -80,7 +71,6 @@ public class CompanyFacade extends ClientFacade {
 	}
 
 	public List<Coupon> getCompanyCouponsByCategory(Category category) {
-		couponsDAO = new CouponsDBDAO();
 		List<Coupon> coupons = getCompanyCoupons();
 		Iterator<Coupon> iter = coupons.iterator();
 
@@ -96,7 +86,7 @@ public class CompanyFacade extends ClientFacade {
 	}
 
 	public List<Coupon> getCompanyCouponsByPrice(double maxPrice) {
-		couponsDAO = new CouponsDBDAO();
+//		couponsDAO = new CouponsDBDAO();
 		List<Coupon> coupons = getCompanyCoupons();
 
 		Iterator<Coupon> iter = coupons.iterator();
@@ -113,9 +103,17 @@ public class CompanyFacade extends ClientFacade {
 	}
 
 	public Company getCompanyDetails() {
-		companiesDAO = new CompaniesDBDAO();
-		return companiesDAO.getOneCompany(companyId);
+		Company company = companiesDAO.getOneCompany(companyId);
+		company.setCoupons(getCompanyCoupons());
+		return company ;
 
 	}
+
+	@Override
+	public String toString() {
+		return "CompanyFacade [companyId=" + companyId + "]";
+	}
+	
+	
 
 }

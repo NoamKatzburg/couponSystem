@@ -15,13 +15,13 @@ import noam.db.ConnectionPool;
 public class CompaniesDBDAO implements CompaniesDAO {
 
 	private Connection connection;
-	private final String IS_COM_EXIST = "SELECT * FROM `coupon_system`.`companies` WHERE  `email`= ? AND `password`= ? ;";
-	private final String GET_COM_ID_BY_EMAIL = "SELECT * FROM `coupon_system`.`companies` WHERE  `email`= ?;";
-	private final String ADD_COM = "INSERT INTO `coupon_system`.`companies` (`name`, `email`, `password`) VALUES (?, ?, ?);\r\n";
-	private final String UPDATE_COM = "UPDATE `coupon_system`.`companies` SET `email` = ?, `password` = ? WHERE (`id` = ?);\r\n";
-	private final String DELETE_COM = "DELETE FROM `coupon_system`.`companies` WHERE (`id` = ?);";
-	private final String GET_ALL_COM = "SELECT * FROM `coupon_system`.`companies`;";
-	private final String GET_ONE_COM_BY_ID = "SELECT * FROM `COUPON_SYSTEM`.`COMPANIES` WHERE `id`=?;";
+	private static final String IS_COM_EXIST = "SELECT * FROM `coupon_system`.`companies` WHERE  `email`= ? AND `password`= ? ;";
+	private static final String GET_COM_ID_BY_EMAIL = "SELECT * FROM `coupon_system`.`companies` WHERE  `email`= ?;";
+	private static final String ADD_COM = "INSERT INTO `coupon_system`.`companies` (`name`, `email`, `password`) VALUES (?, ?, ?);\r\n";
+	private static final String UPDATE_COM = "UPDATE `coupon_system`.`companies` SET `email` = ?, `password` = ? WHERE (`id` = ?);\r\n";
+	private static final String DELETE_COM = "DELETE FROM `coupon_system`.`companies` WHERE (`id` = ?);";
+	private static final String GET_ALL_COM = "SELECT * FROM `coupon_system`.`companies`;";
+	private static final String GET_ONE_COM_BY_ID = "SELECT * FROM `COUPON_SYSTEM`.`COMPANIES` WHERE `id`=?;";
 	
 	
 	public boolean isCompanyExist(String email, String password) throws SQLException {

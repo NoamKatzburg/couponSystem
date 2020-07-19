@@ -1,6 +1,6 @@
 package noam.beans;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Customer {
 
@@ -9,10 +9,10 @@ public class Customer {
 	private String lastName;
 	private String email;
 	private String password;
-	private ArrayList<Coupon> coupons;
+	private List<Coupon> coupons;
 
 	public Customer(int id, String firstName, String lastName, String email, String password,
-			ArrayList<Coupon> coupons) {
+			List<Coupon> coupons) {
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -80,11 +80,11 @@ public class Customer {
 		this.password = password;
 	}
 
-	public ArrayList<Coupon> getCoupons() {
+	public List<Coupon> getCoupons() {
 		return coupons;
 	}
 
-	public void setCoupons(ArrayList<Coupon> coupons) {
+	public void setCoupons(List<Coupon> coupons) {
 		this.coupons = coupons;
 	}
 

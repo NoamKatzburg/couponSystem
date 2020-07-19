@@ -10,10 +10,10 @@ import noam.db.ConnectionPool;
 public class CategoriesDBDAO implements CategoriesDAO {
 
 	private Connection connection;
-	private String INSERT_FOOD_CATEGORY = "INSERT INTO `coupon_system`.`categories` (`name`) VALUES ('Food');";
-	private String INSERT_ELEC_CATEGORY = "INSERT INTO `coupon_system`.`categories` (`name`) VALUES ('Electricty');";
-	private String INSERT_REST_CATEGORY = "INSERT INTO `coupon_system`.`categories` (`name`) VALUES ('Restaurant');";
-	private String INSERT_VACA_CATEGORY = "INSERT INTO `coupon_system`.`categories` (`name`) VALUES ('Vacation');";
+	private static final String INSERT_FOOD_CATEGORY = "INSERT INTO `coupon_system`.`categories` (`name`) VALUES ('Food');";
+	private static final String INSERT_ELEC_CATEGORY = "INSERT INTO `coupon_system`.`categories` (`name`) VALUES ('Electricty');";
+	private static final String INSERT_REST_CATEGORY = "INSERT INTO `coupon_system`.`categories` (`name`) VALUES ('Restaurant');";
+	private static final String INSERT_VACA_CATEGORY = "INSERT INTO `coupon_system`.`categories` (`name`) VALUES ('Vacation');";
 
 	public void initCategoryTable() {
 		try {
@@ -25,9 +25,10 @@ public class CategoriesDBDAO implements CategoriesDAO {
 			e.getMessage();
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
 		}
 
-		connection = null;
+		
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
@@ -52,9 +53,10 @@ public class CategoriesDBDAO implements CategoriesDAO {
 			e.getMessage();
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
 		}
 
-		connection = null;
+		
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
@@ -65,6 +67,7 @@ public class CategoriesDBDAO implements CategoriesDAO {
 			e.getMessage();
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
 		}
 	}
 

@@ -15,14 +15,14 @@ import noam.db.ConnectionPool;
 public class CustomersDBDAO implements CustomersDAO {
 
 	private Connection connection;
-	private String IS_CUST_EXIST = "SELECT * FROM `coupon_system`.`customers` WHERE  `email`= ? AND `password`=?";
-	private String GET_CUST_ID_BY_EMAIL = "SELECT * FROM `coupon_system`.`customers` WHERE `email`= ?;";
-	private String ADD_CUST = "INSERT INTO `coupon_system`.`customers` (`first_name`, `last_name`, `email`, `password`) VALUES (?, ?, ?, ?);\r\n";
-	private String UPDATE_CUST = "UPDATE `coupon_system`.`customers` SET `first_name` = ?, `last_name` = ?, `email` = ?, `password` = ? WHERE (`id` = ?);";
-	private String DELETE_CUST = "DELETE FROM `coupon_system`.`customers` WHERE (`id` = ?);";
-	private String GET_ALL_CUST = "SELECT * FROM `coupon_system`.`customers`;";
-	private String GET_ONE_CUST ="SELECT * FROM `coupon_system`.`customers` WHERE (`id`= ?);";
-	private String GET_ONE_CUST_BY_EMAIL ="SELECT * FROM `coupon_system`.`customers` WHERE (`email`= ?);";
+	private final static String IS_CUST_EXIST = "SELECT * FROM `coupon_system`.`customers` WHERE `email`= ? AND `password`=?;";
+	private final static String GET_CUST_ID_BY_EMAIL = "SELECT * FROM `coupon_system`.`customers` WHERE `email`= ?;";
+	private final static String ADD_CUST = "INSERT INTO `coupon_system`.`customers` (`first_name`, `last_name`, `email`, `password`) VALUES (?, ?, ?, ?);";
+	private final static String UPDATE_CUST = "UPDATE `coupon_system`.`customers` SET `first_name` = ?, `last_name` = ?, `email` = ?, `password` = ? WHERE (`id` = ?);";
+	private final static String DELETE_CUST = "DELETE FROM `coupon_system`.`customers` WHERE (`id` = ?);";
+	private final static String GET_ALL_CUST = "SELECT * FROM `coupon_system`.`customers`;";
+	private final static String GET_ONE_CUST ="SELECT * FROM `coupon_system`.`customers` WHERE (`id`= ?);";
+	private final static String GET_ONE_CUST_BY_EMAIL ="SELECT * FROM `coupon_system`.`customers` WHERE (`email`= ?);";
 
 	public boolean isCustomerExist(String email, String password) {
 		try {
@@ -52,7 +52,6 @@ public class CustomersDBDAO implements CustomersDAO {
 
 	public int getCustomerIdByEmail(String email) {
 		int id = 0;
-		connection = null;
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
@@ -74,6 +73,7 @@ public class CustomersDBDAO implements CustomersDAO {
 			e.getMessage();
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
 		}
 		return id;
 	}

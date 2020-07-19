@@ -1,6 +1,7 @@
 package noam;
 
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -16,8 +17,11 @@ import noam.exceptions.EmailExistsException;
 import noam.exceptions.NoSuchCouponException;
 import noam.exceptions.OutOfStockException;
 import noam.facade.AdminFacade;
+import noam.facade.ClientFacade;
 import noam.facade.CompanyFacade;
 import noam.facade.CustomerFacade;
+import noam.login.ClientType;
+import noam.login.LoginManager;
 import noam.utils.MyUtils;
 
 public class Test {
@@ -116,39 +120,36 @@ public class Test {
 		coupon4.setAmount(1213);
 		coupon4.setPrice(66.9);
 		coupon4.setImage("img");
+		
 
-		// testCompanyClass(companiesDBDAO, c1, c2, c3);
-		// testCustomerClass(customersDBDAO, cust1, cust2, cust3, cust4);
-		// testCouponsClass(cuDbdao, cu1, cu2, cu3);
-
-		AdminFacade aFacade = new AdminFacade();
 		MyUtils.classSeparator("*Admin*");
 
 		MyUtils.printTestLine("Testing Admin login");
-		System.out.println("If it works will return true: " + aFacade.login("admin@admin.com", "admin"));
+		ClientFacade facade = LoginManager.getInstance().login("admin@admin.com", "admin", ClientType.ADMINISTRATOR);
+
 
 		MyUtils.printTestLine("Testing add company");
-		aFacade.addCompany(com1);
-		aFacade.addCompany(com2);
-		aFacade.addCompany(com3);
-		List<Company> companies = aFacade.getAllCompanies();
+		((AdminFacade) facade).addCompany(com1);
+		((AdminFacade) facade).addCompany(com2);
+		((AdminFacade) facade).addCompany(com3);
+		List<Company> companies = ((AdminFacade) facade).getAllCompanies();
 		MyUtils.printCompaniesTable(companies);
 
 		MyUtils.printTestLine("Testing update company");
 		com1.setEmail("com1@g.com");
-		aFacade.updateCompany(com1, 1);
-		companies = aFacade.getAllCompanies();
+		((AdminFacade) facade).updateCompany(com1, 1);
+		companies = ((AdminFacade) facade).getAllCompanies();
 		MyUtils.printCompaniesTable(companies);
 
 		MyUtils.printTestLine("Testing get one company");
-		System.out.println(aFacade.getOneCompany(2));
+		System.out.println(((AdminFacade) facade).getOneCompany(2));
 
 		MyUtils.printTestLine("Testing add customer");
-		aFacade.addCustomer(cust1);
-		aFacade.addCustomer(cust2);
-		aFacade.addCustomer(cust3);
-		aFacade.addCustomer(cust4);
-		List<Customer> customers = aFacade.getAllCustomers();
+		((AdminFacade) facade).addCustomer(cust1);
+		((AdminFacade) facade).addCustomer(cust2);
+		((AdminFacade) facade).addCustomer(cust3);
+		((AdminFacade) facade).addCustomer(cust4);
+		List<Customer> customers = ((AdminFacade) facade).getAllCustomers();
 		MyUtils.printCustomersTable(customers);
 
 		MyUtils.printTestLine("Testing update customer");
@@ -158,115 +159,119 @@ public class Test {
 		} catch (Exception e) {
 			e.getMessage();
 		}
-		aFacade.updateCustomer(cust1, 1);
-		aFacade.updateCustomer(cust2, 2);
-		customers = aFacade.getAllCustomers();
+		((AdminFacade) facade).updateCustomer(cust1, 1);
+		((AdminFacade) facade).updateCustomer(cust2, 2);
+		customers = ((AdminFacade) facade).getAllCustomers();
 		MyUtils.printCustomersTable(customers);
 
 		MyUtils.printTestLine("Testing one customer");
-		System.out.println(aFacade.getOneCustomer(2));
+		System.out.println(((AdminFacade) facade).getOneCustomer(2));
 
 		// checked and works
 //		MyUtils.printTestLine("Testing delete company");
-//		aFacade.deleteCompany(3);
+//		((AdminFacade) facade).deleteCompany(3);
 //		System.out.println("deleted " + com3.getName());
-//		companies = aFacade.getAllCompanies();
+//		companies = ((AdminFacade) facade).getAllCompanies();
 //		MyUtils.printCompaniesTable(companies);
 //		
 //		
 //		MyUtils.printTestLine("Testing delete customer");
-//		aFacade.deleteCustomer(1);
+//		((AdminFacade) facade).deleteCustomer(1);
 //		System.out.println("deleted " + cust1.getFirstName() + " " + cust1.getLastName());
-//		customers = aFacade.getAllCustomers();
+//		customers = ((AdminFacade) facade).getAllCustomers();
 //		MyUtils.printCustomersTable(customers);
 
 		////////////////////////////////////////////////////////////////////////////////////////
-		CompanyFacade companyFacade = new CompanyFacade();
 		MyUtils.classSeparator("Company");
 
 		MyUtils.printTestLine("Testing Company Login");
-		System.out.println("if works should return true: " + companyFacade.login("com1@g.com", "com1")); // company 1
+		facade = LoginManager.getInstance().login("com1@g.com", "com1", ClientType.COMPANY);// company 1
+		System.out.println(facade);
 
 		MyUtils.printTestLine("Testing add coupon");
-		companyFacade.addCoupon(coupon1);
-		companyFacade.login("com2@g.com", "com2"); // company 2
-		companyFacade.addCoupon(coupon2);
-		companyFacade.login("com3@g.com", "com3"); // company 3
-		companyFacade.addCoupon(coupon3);
-		companyFacade.login("com1@g.com", "com1");
-		companyFacade.addCoupon(coupon4);
-		List<Coupon> coupons = aFacade.getAllCoupons();
+		((CompanyFacade) facade).addCoupon(coupon1);
+		facade = LoginManager.getInstance().login("com2@g.com", "com2", ClientType.COMPANY);// company 2
+		((CompanyFacade) facade).addCoupon(coupon2);
+		facade = LoginManager.getInstance().login("com3@g.com", "com3", ClientType.COMPANY);// company 3
+		((CompanyFacade) facade).addCoupon(coupon3);
+		facade = LoginManager.getInstance().login("com1@g.com", "com1", ClientType.COMPANY);
+		((CompanyFacade) facade).addCoupon(coupon4);
+		facade = LoginManager.getInstance().login("admin@admin.com", "admin", ClientType.ADMINISTRATOR);
+		List<Coupon> coupons = ((AdminFacade) facade).getAllCoupons();
 		MyUtils.printCouponsTable(coupons);
 
 		MyUtils.printTestLine("Testing update coupon");
 		coupon2.setAmount(500);
-		companyFacade.login("com2@g.com", "com2");
-		companyFacade.updateCoupon(coupon2, 2);
-		coupons = aFacade.getAllCoupons();
+		facade = LoginManager.getInstance().login("com2@g.com", "com2", ClientType.COMPANY);// company 2
+		((CompanyFacade) facade).updateCoupon(coupon2, 2);
+		facade = LoginManager.getInstance().login("admin@admin.com", "admin", ClientType.ADMINISTRATOR);
+		coupons = ((AdminFacade) facade).getAllCoupons();
 		MyUtils.printCouponsTable(coupons);
 
 		MyUtils.printTestLine("Testing get company coupons");
-		companyFacade.login("com1@g.com", "com1");
-		coupons = companyFacade.getCompanyCoupons();
+		facade = LoginManager.getInstance().login("com1@g.com", "com1", ClientType.COMPANY);
+		coupons = ((CompanyFacade) facade).getCompanyCoupons();
 		MyUtils.printCouponsTable(coupons);
 
 		MyUtils.printTestLine("get  Company Coupons By Category (Restaurant)");
-		coupons = companyFacade.getCompanyCouponsByCategory(Category.Restaurant);
+		coupons = ((CompanyFacade) facade).getCompanyCouponsByCategory(Category.Restaurant);
 		MyUtils.printCouponsTable(coupons);
 
 		MyUtils.printTestLine("testing get company coupons by price (less or equal to 50)");
-		coupons = companyFacade.getCompanyCouponsByPrice(50.0);
+		coupons = ((CompanyFacade) facade).getCompanyCouponsByPrice(50.0);
 		MyUtils.printCouponsTable(coupons);
 
 		MyUtils.printTestLine("Getting company details");
-		System.out.println(companyFacade.getCompanyDetails());
+		System.out.println(((CompanyFacade) facade).getCompanyDetails());
 
 		
 		// checked and works
 //		MyUtils.printTestLine("Testing delete coupon");
-//		companyFacade.deleteCoupon(1);
-//		coupons = aFacade.getAllCoupons();
+//		((CompanyFacade) facade).deleteCoupon(1);
+//		facade = LoginManager.getInstance().login("admin@admin.com", "admin", ClientType.ADMINISTRATOR);
+//		coupons = ((AdminFacade) facade).getAllCoupons();
 //		MyUtils.printCouponsTable(coupons);
 
-////////////////////////////////////////////////////////////////////////////////////////
-		
-		CustomerFacade customerFacade = new CustomerFacade();
+//////////////////////////////////////////////////////////////////////////////////////////
+
 
 		MyUtils.classSeparator("Customer");
 
 		MyUtils.printTestLine("Testing Customer login");
-		System.out.println("If it works will return true: " + customerFacade.login("cust1@g.com", "987654"));
+		facade = LoginManager.getInstance().login("cust1@g.com", "987654", ClientType.CUSTOMER);
 
 		MyUtils.printTestLine("testing Purchase coupon");
-		customerFacade.purchaseCoupon(coupon1, 1);
-		customerFacade.login("cust2@g.com", "1234");
-		customerFacade.purchaseCoupon(coupon2, 2);
-		customerFacade.purchaseCoupon(coupon2, 2); // tried to buy twice
-		customerFacade.login("cust3@g.com", "1234");
-		customerFacade.purchaseCoupon(coupon3, 3); // is expired
-		customerFacade.purchaseCoupon(coupon4, 4);
-		customerFacade.purchaseCoupon(coupon1, 1);
-		customerFacade.login("cust4@g.com", "1234");
-		customerFacade.purchaseCoupon(coupon4, 4);
+		((CustomerFacade) facade).purchaseCoupon(coupon1, 1);
+		facade = LoginManager.getInstance().login("cust2@g.com", "1234", ClientType.CUSTOMER);
+		((CustomerFacade) facade).purchaseCoupon(coupon2, 2);
+		((CustomerFacade) facade).purchaseCoupon(coupon2, 2); // tried to buy twice, should fail
+		facade = LoginManager.getInstance().login("cust3@g.com", "1234", ClientType.CUSTOMER);
+		((CustomerFacade) facade).purchaseCoupon(coupon3, 3); // is expired, should fail
+		((CustomerFacade) facade).purchaseCoupon(coupon4, 4);
+		((CustomerFacade) facade).purchaseCoupon(coupon1, 1);
+		facade = LoginManager.getInstance().login("cust4@g.com", "1234", ClientType.CUSTOMER);
+		((CustomerFacade) facade).purchaseCoupon(coupon4, 4);
 		System.out.println();
 		MyUtils.printCouponsVsCustomersTable();
-		coupons = aFacade.getAllCoupons();
+		facade = LoginManager.getInstance().login("admin@admin.com", "admin", ClientType.ADMINISTRATOR);
+		coupons = ((AdminFacade) facade).getAllCoupons();
 		MyUtils.printCouponsTable(coupons);
 
 		MyUtils.printTestLine("testing get customer coupons (customer 3)");
-		customerFacade.login("cust3@g.com", "1234");
-		MyUtils.printCouponsTable(customerFacade.getCustomerCoupons());
+		facade = LoginManager.getInstance().login("cust3@g.com", "1234", ClientType.CUSTOMER);
+		MyUtils.printCouponsTable(((CustomerFacade) facade).getCustomerCoupons());
 		
 		MyUtils.printTestLine("Testing get Customer Coupons By Category");
-		coupons = customerFacade.getCustomerCouponsByCategory(Category.Restaurant);
+		coupons = ((CustomerFacade) facade).getCustomerCouponsByCategory(Category.Restaurant);
 		MyUtils.printCouponsTable(coupons);
 		
 		MyUtils.printTestLine("Testing get Customer Coupons By price");
-		coupons = customerFacade.getCustomerCouponsByPrice(50.0);
+		coupons = ((CustomerFacade) facade).getCustomerCouponsByPrice(50.0);
 		MyUtils.printCouponsTable(coupons);
 		
 		MyUtils.printTestLine("Testing get Customer details");
-		System.out.println(customerFacade.getCustomerDetails());
+		System.out.println(((CustomerFacade) facade).getCustomerDetails());
+		
 	}
 
 }

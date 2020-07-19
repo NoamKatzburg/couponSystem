@@ -14,9 +14,13 @@ public static void main(String[] args) {
 			Test.testAll();
 		} catch (ClassNotFoundException | SQLException | InterruptedException | OutOfStockException
 				| NoSuchCouponException | CannotChangeException | EmailExistsException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+			e.getMessage();
 		}
+		
+		System.out.println("end");
 	
+
+
 }
 }

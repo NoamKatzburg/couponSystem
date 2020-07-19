@@ -1,34 +1,32 @@
 package noam.facade;
 
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import noam.beans.Company;
 import noam.beans.Coupon;
 import noam.beans.Customer;
-import noam.dbdao.CompaniesDBDAO;
-import noam.dbdao.CouponsDBDAO;
-import noam.dbdao.CustomersDBDAO;
+import noam.exceptions.CannotChangeException;
 import noam.exceptions.EmailExistsException;
 import noam.exceptions.NoSuchCouponException;
 
 public class AdminFacade extends ClientFacade {
-	
-	
 
 	public AdminFacade() {
-		
+		super();
 	}
 
 	public boolean login(String email, String password) {
 		if (email == "admin@admin.com" && password == "admin") {
+			System.out.println("ADMIN is now logged in");
 			return true;
 		}
 		return false;
 	}
 
 	public void addCompany(Company company) throws SQLException {
-		companiesDAO = new CompaniesDBDAO();
 		if (companiesDAO.getAllCompanies() == null) {
 			companiesDAO.addCompany(company);
 		} else {
@@ -43,20 +41,15 @@ public class AdminFacade extends ClientFacade {
 					return;
 				}
 			}
-
 			companiesDAO.addCompany(company);
 		}
-
 	}
 
 	public void updateCompany(Company company, int id) {
-		companiesDAO = new CompaniesDBDAO();
 		companiesDAO.updateCompany(company, id);
 	}
 
 	public void deleteCompany(int companyId) throws NoSuchCouponException {
-		couponsDAO = new CouponsDBDAO();
-		companiesDAO = new CompaniesDBDAO();
 		List<Coupon> allCoupons = couponsDAO.getAllCoupons();
 		System.out.println(allCoupons);
 		for (Coupon coupon : allCoupons) {
@@ -72,18 +65,23 @@ public class AdminFacade extends ClientFacade {
 
 	}
 
-	public List<Company> getAllCompanies() {
-		return companiesDAO.getAllCompanies();
-
+	public List<Company> getAllCompanies() throws CannotChangeException {
+		List<Company> companies = companiesDAO.getAllCompanies();
+		for (Company company : companies) {
+			company.setCoupons(couponsDAO.getAllCouponsByCompanyId(company.getId()));
+		}
+		return companies;
 	}
 
 	public Company getOneCompany(int companyId) {
-		return companiesDAO.getOneCompany(companyId);
+		Company c1 = companiesDAO.getOneCompany(companyId);
+	//	c1.setCoupons(couponsDAO.getAllCouponsByCompanyId(companyId));
+		return c1;
 
 	}
 
 	public void addCustomer(Customer customer) throws EmailExistsException {
-		customersDAO = new CustomersDBDAO();
+//		customersDAO = new CustomersDBDAO();
 		List<Customer> customers = customersDAO.getAllCustomers();
 		for (Customer cust : customers) {
 			if (customer.getEmail() == cust.getEmail()) {
@@ -103,16 +101,21 @@ public class AdminFacade extends ClientFacade {
 	}
 
 	public List<Customer> getAllCustomers() {
-		return customersDAO.getAllCustomers();
+		List<Customer> customers = customersDAO.getAllCustomers();
+		for (Customer customer : customers) {
+			customer.setCoupons(couponsDAO.getCouponsByCustomerId(customer.getId()));
+		}
+		return customers;
 	}
 
 	public Customer getOneCustomer(int customerId) {
-		return customersDAO.getOneCustomer(customerId);
-
+		Customer c1 = customersDAO.getOneCustomer(customerId);
+		c1.setCoupons(couponsDAO.getCouponsByCustomerId(c1.getId()));
+		return c1;
 	}
 
 	public List<Coupon> getAllCoupons() {
-		couponsDAO = new CouponsDBDAO();
+//		couponsDAO = new CouponsDBDAO();
 		return couponsDAO.getAllCoupons();
 	}
 

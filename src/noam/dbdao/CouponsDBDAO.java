@@ -21,19 +21,19 @@ public class CouponsDBDAO implements CouponsDAO {
 
 	private Connection connection;
 	private CategoriesDBDAO categoriesDBDAO = new CategoriesDBDAO();
-	private final String ADD_COUP = "INSERT INTO `coupon_system`.`coupons` (`company_id`, `category_id`, `title`, `description`, `start_date`, `end_date`, `amount`, `price`, `image`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);\r\n";
-	private final String UPDATE_COUP = "UPDATE `coupon_system`.`coupons` SET `category_id` = ?, `title` = ?, `description` = ?, `start_date` = ?, `end_date` = ?, `amount` = ?, `price` = ?, `image` = ? WHERE (`id` = ?);\r\n";
-	private final String DELETE_COUP = "DELETE FROM `coupon_system`.`coupons` WHERE (`id` = ?);";
-	private final String GET_ALL_COUP = "SELECT * FROM `coupon_system`.`coupons`;";
-	private final String GET_ALL_COUP_BY_COM_ID = "SELECT * FROM `coupon_system`.`coupons` WHERE `company_id`= ?;";
-	private final String GET_ONE_COUP = "SELECT * FROM `coupon_system`.`coupons` WHERE (`id`= ?);";
-	private final String ADD_COUP_PURCHASE = "INSERT INTO `coupon_system`.`customers_vs_coupons` (`customer_id`, `coupon_id`) VALUES (?, ?);";
-	private final String DOES_COUP_PURCHASE_EXIST = "SELECT * FROM coupon_system.customers_vs_coupons WHERE `customer_id` = ? AND `coupon_id` = ?;";
-	private final String GET_COUP_BY_CUST_ID = "SELECT * FROM coupon_system.customers_vs_coupons WHERE `customer_id` = ?;";
-	private final String DELETE_COUP_PURCHASE = "DELETE FROM `coupon_system`.`customers_vs_coupons` WHERE (`customer_id` = ?) and (`coupon_id` = ?);\r\n";
-	private final String DELETE_COUP_PURCHASE_BY_ID = "DELETE FROM `coupon_system`.`customers_vs_coupons` WHERE (`coupon_id` = ?);\r\n";
-	private final String DELETE_COUP_PURCHASES_BY_CUST_ID = "SELECT * FROM coupon_system.customers_vs_coupons WHERE `customer_id` = ?;";
-	private final String COES_COUP_EXIST = "SELECT * FROM coupon_system.coupons where `id`=?;";
+	private static final String ADD_COUP = "INSERT INTO `coupon_system`.`coupons` (`company_id`, `category_id`, `title`, `description`, `start_date`, `end_date`, `amount`, `price`, `image`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);\r\n";
+	private static final String UPDATE_COUP = "UPDATE `coupon_system`.`coupons` SET `category_id` = ?, `title` = ?, `description` = ?, `start_date` = ?, `end_date` = ?, `amount` = ?, `price` = ?, `image` = ? WHERE (`id` = ?);\r\n";
+	private static final String DELETE_COUP = "DELETE FROM `coupon_system`.`coupons` WHERE (`id` = ?);";
+	private static final String GET_ALL_COUP = "SELECT * FROM `coupon_system`.`coupons`;";
+	private static final String GET_ALL_COUP_BY_COM_ID = "SELECT * FROM `coupon_system`.`coupons` WHERE `company_id`= ?;";
+	private static final String GET_ONE_COUP = "SELECT * FROM `coupon_system`.`coupons` WHERE (`id`= ?);";
+	private static final String ADD_COUP_PURCHASE = "INSERT INTO `coupon_system`.`customers_vs_coupons` (`customer_id`, `coupon_id`) VALUES (?, ?);";
+	private static final String DOES_COUP_PURCHASE_EXIST = "SELECT * FROM coupon_system.customers_vs_coupons WHERE `customer_id` = ? AND `coupon_id` = ?;";
+	private static final String GET_COUP_BY_CUST_ID = "SELECT * FROM coupon_system.customers_vs_coupons WHERE `customer_id` = ?;";
+	private static final String DELETE_COUP_PURCHASE = "DELETE FROM `coupon_system`.`customers_vs_coupons` WHERE (`customer_id` = ?) and (`coupon_id` = ?);\r\n";
+	private static final String DELETE_COUP_PURCHASE_BY_ID = "DELETE FROM `coupon_system`.`customers_vs_coupons` WHERE (`coupon_id` = ?);\r\n";
+	private static final String DELETE_COUP_PURCHASES_BY_CUST_ID = "SELECT * FROM coupon_system.customers_vs_coupons WHERE `customer_id` = ?;";
+	private static final String COES_COUP_EXIST = "SELECT * FROM coupon_system.coupons where `id`=?;";
 
 	public void addCoupon(Coupon coupon) {
 		try {
@@ -60,8 +60,6 @@ public class CouponsDBDAO implements CouponsDAO {
 	}
 
 	public void updateCoupon(Coupon coupon, int id) {
-		connection = null;
-
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
@@ -81,6 +79,7 @@ public class CouponsDBDAO implements CouponsDAO {
 			e.getMessage();
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
 		}
 
 	}
@@ -99,6 +98,7 @@ public class CouponsDBDAO implements CouponsDAO {
 			e.getMessage();
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
 		}
 
 	}
@@ -202,9 +202,10 @@ public class CouponsDBDAO implements CouponsDAO {
 		return c1;
 	}
 
-	public void addCouponPurchase(int customerID, int couponID) {
+	public void addCouponPurchase(int customerID, int couponID) throws OutOfStockException {
 
 		Coupon c1 = getOneCoupon(couponID);
+		if(c1.getAmount()>0) {
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
@@ -227,6 +228,9 @@ public class CouponsDBDAO implements CouponsDAO {
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
 			connection = null;
+		}
+		}else {
+			throw new OutOfStockException("This coupon is out of stock");
 		}
 
 	}
@@ -257,7 +261,7 @@ public class CouponsDBDAO implements CouponsDAO {
 
 	public List<Coupon> getCouponsByCustomerId(int customerId) {
 		List<Coupon> customerCoupons = new ArrayList<Coupon>();
-
+		Coupon coupon = null;
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 
@@ -267,10 +271,11 @@ public class CouponsDBDAO implements CouponsDAO {
 			statement.setInt(1, customerId);
 			ResultSet resultSet = statement.executeQuery();
 			while (resultSet.next()) {
-				int customerID = resultSet.getInt(1);
+			//	int customerID = resultSet.getInt(1);
 				int couponId = resultSet.getInt(2);
 
-				customerCoupons.add(getOneCoupon(couponId));
+				coupon  = getOneCoupon(couponId);
+				customerCoupons.add(coupon);
 			}
 
 		} catch (Exception e) {
@@ -317,10 +322,7 @@ public class CouponsDBDAO implements CouponsDAO {
 	}
 
 	public void deleteCouponPurchaseById(int couponID) throws NoSuchCouponException {
-		Coupon c1 = null;
 		if (doesCouponExist(couponID) == true) {
-
-			c1 = getOneCoupon(couponID);
 			try {
 				connection = ConnectionPool.getInstance().getConnection();
 
@@ -359,8 +361,6 @@ public class CouponsDBDAO implements CouponsDAO {
 	}
 
 	public boolean doesCouponExist(int couponID) {
-		connection = null;
-
 		try {
 			connection = ConnectionPool.getInstance().getConnection();
 			String sql = COES_COUP_EXIST;
@@ -378,6 +378,7 @@ public class CouponsDBDAO implements CouponsDAO {
 			e.getMessage();
 		} finally {
 			ConnectionPool.getInstance().returnConnection(connection);
+			connection = null;
 		}
 
 		return false;
