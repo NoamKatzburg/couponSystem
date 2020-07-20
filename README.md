@@ -9,4 +9,4 @@
 | Main Package | noam |
 | Schema name   | coupon_system |
 | Table Names | categories, companies, coupons, customers, customers_vs_coupons |
-| GitHub Link | [https://github.com/NoamKatzburg/couponSystem][PlGa] |
+| GitHub Link | [https://github.com/NoamKatzburg/couponSystem]|
